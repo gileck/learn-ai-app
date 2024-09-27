@@ -48,8 +48,8 @@ export default function Home() {
   const [mainColor, setColor] = React.useState('');
 
   function addToHistory(item) {
-    const history = localStorageAPI.get('history')
-    localStorageAPI.set('history', [...history, item])
+    const history = localStorageAPI().get('history')
+    localStorageAPI().set('history', [...history, item])
   }
 
   console.log({ route });
