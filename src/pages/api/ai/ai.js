@@ -39,7 +39,7 @@ function calcPrice(model, tokens) {
     const prompt_tokens_price = modelPrices[model].prompt_tokens_price
     const completion_tokens_price = modelPrices[model].completion_tokens_price
     const price = ((prompt_tokens) * prompt_tokens_price) + ((completion_tokens) * completion_tokens_price)
-    return Math.round((price * 3.7) * 1000) / 1000;
+    return price * 3.7
 }
 
 const models = {

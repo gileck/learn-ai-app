@@ -10,17 +10,21 @@ const fetchPromiseCache = {}
 const cache = getData('fetchCache') || {};
 const getFromCache = (url) => cache[url];
 const saveToCache = (url, data) => {
-    cache[url] = data;
+    const dataClone = JSON.parse(JSON.stringify(data));
+    if (dataClone?.dataClone?.apiPrice) {
+        dataClone.dataClone.apiPrice = null
+    }
+    cache[url] = dataClone;
     saveData('fetchCache', cache);
 }
 
-function getDataFromCache(url) {
+function getDataFromCache(url, overrideStaleTime) {
     const data = getFromCache(url);
     if (data) {
         const { timestamp, data: dataFromCache } = data;
         const now = new Date().getTime();
         const diff = now - timestamp;
-        if (diff < STALE_TIME) {
+        if (diff < overrideStaleTime || STALE_TIME) {
             return dataFromCache;
         }
     }
@@ -65,12 +69,15 @@ export function useFetch(_url, options = {}) {
     const query = options.query ? '?' + new URLSearchParams(options.query).toString() : '';
     const url = _url + query;
     const shouldUsecache = options.shouldUsecache !== false;
+    const disableFetchInBackground = options.disableFetchInBackground === true;
+    const overrideStaleTime = options.overrideStaleTime;
+
 
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const dataFromCache = shouldUsecache ? getDataFromCache(url) : null;
+    const dataFromCache = shouldUsecache ? getDataFromCache(url, overrideStaleTime) : null;
 
     useEffect(() => {
         if (dataFromCache) {
@@ -89,7 +96,11 @@ export function useFetch(_url, options = {}) {
             })
             .then((data) => {
                 setData(data);
+                if (options.onDataFetched) {
+                    options.onDataFetched(data);
+                }
                 saveDataToCache(url, data);
+
             }).catch((e) => {
                 console.error('Error fetching data', e.message);
                 setError(e);
@@ -101,7 +112,7 @@ export function useFetch(_url, options = {}) {
     }, [url]);
 
     if (dataFromCache) {
-        if (shouldFetchInBackground(url)) {
+        if (!disableFetchInBackground && shouldFetchInBackground(url)) {
             updateCacheInBackground(url)
         }
         // return { data: dataFromCache, loading: false, error: null }
