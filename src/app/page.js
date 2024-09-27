@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useFetch } from "./useFetch";
 import { Box, Collapse, Divider, IconButton, LinearProgress, List, ListItem, ListItemText, TextField, Typography } from '@mui/material';
 import { ArrowBack, ArrowDropDown, ArrowDropUp, ArrowUpward, Send, SendRounded } from '@mui/icons-material';
+import { localStorageAPI } from './localStorageAPI';
 
 const staticSubjects = [
   "Astrobiology",
@@ -45,11 +46,20 @@ function speak(text) {
 export default function Home() {
   const [route, setRouteInternal] = React.useState([]);
   const [mainColor, setColor] = React.useState('');
-  const [mainInput, setMainInput] = React.useState('');
+
+  function addToHistory(item) {
+    const history = localStorageAPI.get('history')
+    localStorageAPI.set('history', [...history, item])
+  }
 
   console.log({ route });
-  const setRoute = (route) => {
-    setRouteInternal(prevRoute => [...prevRoute, route]);
+  const setRoute = (_route) => {
+    addToHistory({
+      subject: _route,
+      route: [...route, _route],
+      date: new Date().getTime()
+    })
+    setRouteInternal(prevRoute => [...prevRoute, _route]);
   }
   const setBackRoute = () => {
     setRouteInternal(prevRoute => prevRoute.slice(0, -1));
