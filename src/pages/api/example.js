@@ -8,15 +8,16 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-    const { exclude } = req.body;
-    console.log({ exclude });
-
+    const { title, mainSubject } = req.body
 
     const prompt = `
-    return an array of random 5 subjects to learn about.
-    return a JSON object with a single key "subjects" that contains an array of strings.
-    ${exclude ? "do not include: " + exclude.join(', ') : ''}
+            Write an example of "${title}" in the real world. try to be as specific as possible.
+            it should be related to the subject: ${mainSubject}.
+            return a JSON object with 2 keys:
+                1. "text": a paragraph describing an example of "${title}" in the real world. try to be as specific as possible.
+                2. "title": a title of the example.
     `;
+
 
     const { result, apiPrice, modelToUse, usage, duration } = await getResponseFromGpt({
         system: '',
