@@ -19,10 +19,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+      <html lang="en">
+        <link rel="icon" href="/favicon.webp" type="image/webp"/>
+
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      {children}
       </body>
-    </html>
+      </html>
   );
 }
