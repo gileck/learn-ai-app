@@ -10,6 +10,10 @@ if (process.env.NODE_ENV === 'development') {
 } else {
     OPENAI_API_KEY = process.env.OPENAI_API_KEY
 }
+//create  gptFiles if not exist
+if (!fs.existsSync(path.resolve('./gptFiles'))) {
+    fs.mkdirSync(path.resolve('./gptFiles'))
+}
 
 // const { parsed: { OPENAI_API_KEY } } = dotenv.config()
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
@@ -47,50 +51,6 @@ const models = {
     '4': 'gpt-4o',
 
 }
-export async function getResult({ messages, systemText, inputText, max_tokens, isJSON, temperature, model }) {
-    const modelToUse = models[model] || 'gpt-4o-mini'
-    const gptOptions = {
-        model: modelToUse,
-        temperature: temperature || 0.8,
-        response_format: { "type": isJSON ? "json_object" : 'text' },
-        max_tokens: max_tokens || 10000,
-        messages: messages || [
-            {
-                "role": "system",
-                "content": `${systemText}`
-
-            },
-            {
-                "role": "user",
-                "content": `${inputText}`
-            }
-        ],
-
-    }
-    const response = await openai.chat.completions.create(gptOptions).catch(e => {
-        console.log(`ERROR in getResponseFromGpt: ${e.message}`)
-        return null
-    })
-    if (!response) {
-        return null
-    }
-    // console.log({response})
-    const content = response.choices[0].message.content
-    const finish_reason = response.choices[0].finish_reason
-    const usage = response.usage
-    const apiPrice = calcPrice(modelToUse, usage)
-
-    fs.appendFileSync(path.resolve('./gptFiles', `${(new Date()).toLocaleTimeString()}.json`), `
-    ${JSON.stringify({ content, usage, apiPrice, finish_reason }, null, 2) + '\n\n'}
-    `)
-
-    return {
-        finish_reason,
-        result: isJSON ? JSON.parse(content) : content,
-        apiPrice
-    }
-}
-
 export async function getResponseFromGpt({ system, inputText, isJSON, model }) {
     const modelToUse = models[model] || 'gpt-4o-mini'
 
