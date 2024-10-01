@@ -20,7 +20,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
       <html lang="en">
-        <link rel="icon" href="/favicon.webp" type="image/webp"/>
+      <link rel="icon" sizes="180x180" href="/favicon.png"/>
+      <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png"/>
 
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
       {children}
