@@ -4,14 +4,15 @@ import fs from 'fs'
 import path from 'path'
 
 let OPENAI_API_KEY = null
-if (process.env.NODE_ENV === 'development') {
+const isLocal = process.env.NODE_ENV === 'development'
+if (isLocal) {
     const { parsed } = dotenv.config()
     OPENAI_API_KEY = parsed.OPENAI_API_KEY
 } else {
     OPENAI_API_KEY = process.env.OPENAI_API_KEY
 }
 //create  gptFiles if not exist
-if (!fs.existsSync(path.resolve('./gptFiles'))) {
+if (isLocal && !fs.existsSync(path.resolve('./gptFiles'))) {
     fs.mkdirSync(path.resolve('./gptFiles'))
 }
 
