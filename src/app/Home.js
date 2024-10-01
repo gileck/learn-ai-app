@@ -77,6 +77,10 @@ function RandomSubjectList({ onDataFetched, setRoute }) {
 
   }
 
+  function onSubjectClicked(subject) {
+    setRoute(subject)
+  }
+
   const subjects = data?.result?.subjects;
   return <>
     <TextInputWithSend
@@ -315,8 +319,9 @@ function TextInputWithSend({ onSubmit, placeHolder }) {
   useEffect(() => {
     const callback = (e) => {
       if (e.key === 'Enter') {
-        onSubmit(input)
         setInput('')
+        onSubmit(input)
+
       }
     }
     window.addEventListener('keydown', callback)
@@ -334,7 +339,7 @@ function TextInputWithSend({ onSubmit, placeHolder }) {
     }}
   >
     <TextField
-
+      value={input}
       label={placeHolder}
       variant="outlined"
       margin="normal"
@@ -357,7 +362,6 @@ function TextInputWithSend({ onSubmit, placeHolder }) {
       <IconButton
         disabled={!input}
         onClick={() => {
-          console.log({ input });
           onSubmit(input)
           setInput('')
         }}>
@@ -385,9 +389,12 @@ function MainList(params) {
     <WithCollapse type='subjects' {...params} mainColor={"lightgreen"} >
       {data => <SubjectList subjects={data.subjects} {...params} />}
     </WithCollapse>
+    <Divider />
     <WithCollapse type='questions' {...params} mainColor={"lightblue"}>
       {data => < QuestionsList questions={data.questions} {...params} />}
     </WithCollapse >
+    <Divider />
+
     <WithCollapse type='examples' {...params} mainColor={"orange"}>
       {data => <ExamplesList examples={data.examples} {...params} />}
     </WithCollapse>
@@ -413,7 +420,7 @@ function WithCollapse({ children, type, mainColor, loadData, title, showArrow })
           if (!data) {
             setLoading(true)
             loadData({ type, title }).then((response) => {
-              console.log(response.result);
+              // console.log(response.result);
               setData(response.result)
               setLoading(false)
             })
@@ -490,7 +497,7 @@ function Question({ mainSubject, question, mainColor, index, onQuestionClicked, 
           p: 1,
         }}
       >
-        <TextBox text={answer?.answer} title={answer?.subject} />
+        <TextBox text={answer?.answer} title={answer?.subject} setRoute={setRoute} />
       </Box>
     </Collapse>
   </Box>
