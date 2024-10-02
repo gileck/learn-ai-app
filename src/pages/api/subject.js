@@ -1,3 +1,4 @@
+import { addConfigToPrompt } from "./config";
 import { getResponseFromGpt } from "./ai/ai";
 // import { getUser } from "../userApi";
 // import { getDB } from "../db";
@@ -8,10 +9,8 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-    const { route } = req.query
-    console.log({ route });
+    const { route, config } = req.query
     const routeArray = route ? route.split(',') : []
-    console.log({ routeArray });
 
     const mainSubject = routeArray[routeArray.length - 1];
     const subjectsWithoutLast = routeArray.slice(0, -1);
@@ -19,14 +18,14 @@ export default async function handler(req, res) {
 
     const prompt = `
     I want to learn about ${mainSubject}.
-        In order to deep dive into the ${mainSubject}, wrie a single short overview paragraph of ${mainSubject} provided.
+        In order to deep dive into the ${mainSubject}, wrie a single short overview  of ${mainSubject} provided.
         The goal is to understand ${mainSubject} in a comprehensive way.
 
         ${subjectsWithoutLast.length > 0 ? "it should also be related to the subjects:" + subjectsWithoutLast.join(', ') : ''}
 
 
         return a JSON object with 1 key:
-            1. description: the short paragraph of ${mainSubject}
+            1. description: a string that contains ${addConfigToPrompt(config)}.
     `;
 
 

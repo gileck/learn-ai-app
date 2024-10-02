@@ -13,8 +13,8 @@ export function Menu({ setPage }) {
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
-    const onHistoryClicked = () => {
-        setPage('history')
+    const handleNavigation = (page) => {
+        setPage(page)
         handleMenuClose()
     }
     return <Box>
@@ -26,7 +26,8 @@ export function Menu({ setPage }) {
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={() => onHistoryClicked()}>History</MenuItem>
+            <MenuItem onClick={() => handleNavigation('history')}>History</MenuItem>
+            <MenuItem onClick={() => handleNavigation('settings')}>Settings</MenuItem>
         </MenuComp>
     </Box>
 }

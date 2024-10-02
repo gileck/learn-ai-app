@@ -1,4 +1,5 @@
 import { getResponseFromGpt } from "./ai/ai";
+import { addConfigToPrompt } from "./config";
 // import { getUser } from "../userApi";
 // import { getDB } from "../db";
 // import { sendLog } from '@/telegramBot/bot.js';
@@ -8,8 +9,7 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-    const { question, mainSubject } = req.body
-    console.log({ question });
+    const { question, mainSubject, config } = req.body
 
 
     const prompt = `
@@ -17,11 +17,14 @@ export default async function handler(req, res) {
 
         ${question}
 
-        answer the question with a short paragraph.
+        
+        --- END OF QUESTION ---
 
-        return a json array with 2 keys:
-        1. answer: the answer to the question
-        2. subject: a very short subject name of the answer - used to read more about the answer
+        Guidelines for response:
+        
+        Return a json array with 2 keys:
+        1. answer (type: string): the answer to the question. the answer should be ${addConfigToPrompt(config)}
+        2. subject (type: string): a very short subject name of the answer - used to read more about the answer
 
 
     `;

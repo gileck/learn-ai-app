@@ -5,6 +5,7 @@ export function TextBox({ text, title, setRoute }) {
     return <Box
         sx={{
             lineHeight: "24px",
+            whiteSpace: "pre-line",
             p: 1
         }}
     >

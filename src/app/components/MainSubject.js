@@ -8,6 +8,7 @@ import { WithCollapse } from './WithCollapse'; // Import WithCollapse component
 import { SubjectList } from './SubjectList'; // Import SubjectList component
 import { QuestionsList } from './QuestionsList'; // Import QuestionsList component
 import { ExamplesList } from './ExamplesList'; // Import ExamplesList component
+import { localStorageAPI } from '../localStorageAPI.js';
 
 export function MainSubject({
     route,
@@ -21,8 +22,9 @@ export function MainSubject({
 
     const [mainColor, setColor] = React.useState(colors[0]);
 
+    const config = localStorageAPI().getData('learn-ai-config') || {}
     const { data, loading } = useFetch('/api/subject', {
-        query: { route },
+        query: { route, config: JSON.stringify(config) },
         shouldUsecache: true,
         overrideStaleTime: 1000 * 60 * 60 * 24 * 7 * 3, // 3 week
         disableFetchInBackground: true,
@@ -44,12 +46,17 @@ export function MainSubject({
 
     async function onQuestionClicked(question, setAnswer) {
         // console.log({ question });
+        const config = localStorageAPI().getData('learn-ai-config') || {}
         const response = await fetchWithCache('/api/question', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ question, mainSubject }),
+            body: JSON.stringify({
+                question,
+                mainSubject,
+                config: JSON.stringify(config)
+            }),
             onSuccess: onDataFetched,
             disableFetchInBackground: true,
 
@@ -61,12 +68,14 @@ export function MainSubject({
     }
 
     async function onLoadMoreClicked(type, exclude, onLoaded) {
+        const config = localStorageAPI().getData('learn-ai-config') || {}
+
         const response = await fetchWithCache('/api/load', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ type, mainSubject, exclude }),
+            body: JSON.stringify({ type, mainSubject, exclude, config: JSON.stringify(config) }),
             onSuccess: onDataFetched,
             disableFetchInBackground: true,
 
@@ -76,24 +85,26 @@ export function MainSubject({
     }
 
     function loadExample({ title }) {
+        const config = localStorageAPI().getData('learn-ai-config') || {}
         return fetchWithCache('/api/example', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ title, mainSubject }),
+            body: JSON.stringify({ title, mainSubject, config: JSON.stringify(config) }),
             onSuccess: onDataFetched,
             disableFetchInBackground: true,
         })
     }
 
     function loadData({ type, params }) {
+        const config = localStorageAPI().getData('learn-ai-config') || {}
         return fetchWithCache('/api/load', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ type, mainSubject, params }),
+            body: JSON.stringify({ type, mainSubject, params, config: JSON.stringify(config) }),
             onSuccess: onDataFetched,
             disableFetchInBackground: true,
         })
