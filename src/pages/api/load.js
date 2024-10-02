@@ -39,7 +39,7 @@ export default async function handler(req, res) {
 
         --------------
 
-        return the result in a JSON array.
+        return the result in a JSON with a key named "${type}" that contains an array of strings.
     `;
 
     // console.log({ prompt });
