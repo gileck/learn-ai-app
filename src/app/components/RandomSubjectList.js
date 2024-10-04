@@ -30,7 +30,7 @@ export function RandomSubjectList({ onDataFetched, setRoute }) {
         setRoute(subject.name, subject.description)
         const deletedSubjects = localStorageAPI().getData('learn-ai-deletedSubjects') || []
         if (deletedSubjects.includes(subject)) return
-        deletedSubjects.push(subject)
+        deletedSubjects.push(subject.name)
         localStorageAPI().saveData('learn-ai-deletedSubjects', deletedSubjects)
     }
 
@@ -42,7 +42,10 @@ export function RandomSubjectList({ onDataFetched, setRoute }) {
             overrideStaleTime: 1000 * 60 * 60 * 24 * 7 * 3, // 3 week
             disableFetchInBackground: true,
             body: JSON.stringify({
-                exclude: deletedSubjects
+                exclude: [
+                    ...deletedSubjects,
+                    ...exclude
+                ]
             }),
             method: 'POST',
             headers: {

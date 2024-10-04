@@ -32,7 +32,7 @@ export function SubjectList({ onSubjectClicked, mainColor, subjects, onLoadMoreC
                 ))}
                 <LoadMoreListItemButton
                     type="subjects"
-                    excludeItems={subjectList}
+                    excludeItems={subjectList.map(item => item.name)}
                     setState={result => setSubjectList(prev => prev ? [...prev, ...result.subjects] : result.subjects)}
                     onLoadMoreClicked={onLoadMoreClicked}
                 />
