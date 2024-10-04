@@ -23,14 +23,23 @@ export default async function handler(req, res) {
 
     const promptByType = {
         "subjects": `
-            return an array of 5 subjects (sub topics) related to the subject: ${mainSubject}.`,
+            return an array of 5 subjects (sub topics) related to the subject: ${mainSubject}.
+            each subject is an object with 2 keys: 
+                1. "name": a string that represents the subject.
+                2. "description": a very short one liner that describes the subject in one sentence.
+            `,
         "questions": `
             return an array of 5 questions related to ${mainSubject}`,
         "examples": `
-            return an array of examples related to ${mainSubject}. each example is JSON object with 2 keys: 
+            return an array of 5 examples related to ${mainSubject}. each example is JSON object with 2 keys: 
                 1. "text": ${addConfigToPrompt(config)}, describing an example of "${mainSubject}" in the real world. try to be as specific as possible.
                 2. "title": a title of the example.
             `,
+        "facts": `
+            return an array of 5 interesting facts related to ${mainSubject}. each fact is an object with 2 keys: 
+                1. "text": ${addConfigToPrompt(config)}, describing an interesting fact of "${mainSubject}" that is not commonly known.
+                2. "title": a very short title of the fact.
+            `
 
     }
 

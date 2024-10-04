@@ -39,6 +39,7 @@ export function WithCollapse({ mainSubject, children, type, mainColor, loadData,
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     bgcolor: mainColor,
+                    width: '100%',
                 }}
             >
                 <Typography>

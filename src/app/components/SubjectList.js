@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { List, ListItem, ListItemText, Box } from '@mui/material';
+import { List, ListItem, ListItemText, Box, IconButton } from '@mui/material';
 import { getColor, colors } from './utils';
 import { LoadMoreListItemButton } from './LoadMoreListItemButton'; // Added missing import
+import { Cancel, Delete, Remove } from '@mui/icons-material';
 
-export function SubjectList({ onSubjectClicked, mainColor, subjects, onLoadMoreClicked }) {
+export function SubjectList({ onSubjectClicked, mainColor, subjects, onLoadMoreClicked, shouldShowXButton, onDeleteSubjectClicked }) {
     const [subjectList, setSubjectList] = React.useState(subjects);
 
-    console.log({ subjectList });
 
     useEffect(() => {
         setSubjectList(subjects);
@@ -19,10 +19,15 @@ export function SubjectList({ onSubjectClicked, mainColor, subjects, onLoadMoreC
             }} >
                 {(subjectList || []).map((subject, index) => (
                     <ListItem
-                        key={subject}
-                        onClick={() => onSubjectClicked(subject, colors.filter(c => c !== mainColor)[index])}
+                        key={subject.name}
+
                         sx={{ bgcolor: getColor({ mainColor, index }), mb: 1, borderRadius: 1 }}>
-                        <ListItemText primary={subject} />
+                        <ListItemText
+                            onClick={() => onSubjectClicked(subject, colors.filter(c => c !== mainColor)[index])}
+                            primary={subject.name}
+                            secondary={subject.description}
+
+                        />
                     </ListItem>
                 ))}
                 <LoadMoreListItemButton

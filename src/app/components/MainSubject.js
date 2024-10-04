@@ -9,6 +9,7 @@ import { SubjectList } from './SubjectList'; // Import SubjectList component
 import { QuestionsList } from './QuestionsList'; // Import QuestionsList component
 import { ExamplesList } from './ExamplesList'; // Import ExamplesList component
 import { localStorageAPI } from '../localStorageAPI.js';
+import { ItemsList } from './ItemsList.js';
 
 export function MainSubject({
     route,
@@ -38,8 +39,8 @@ export function MainSubject({
 
     const mainSubject = route[route.length - 1];
 
-    function onSubjectClicked(subjectName, selectedColor) {
-        setRoute(subjectName);
+    function onSubjectClicked(subject, selectedColor) {
+        setRoute(subject.name, subject.description);
         setColor(selectedColor)
 
     }
@@ -180,6 +181,29 @@ export function MainSubject({
     </>
 }
 
+const listItems = [
+    {
+        type: 'subjects',
+        Comp: SubjectList,
+        mainColor: 'lightgreen',
+    },
+    {
+        type: 'questions',
+        Comp: QuestionsList,
+        mainColor: 'lightblue',
+    },
+    {
+        type: 'examples',
+        Comp: ItemsList,
+        mainColor: 'orange',
+    },
+    {
+        type: 'facts',
+        Comp: ItemsList,
+        mainColor: '#dacdff',
+    }
+]
+
 function MainList(params) {
     return <Box
         sx={{
@@ -190,7 +214,14 @@ function MainList(params) {
             height: '100%'
         }}
     >
-        <WithCollapse type='subjects' {...params} mainColor={"lightgreen"} >
+        {
+            listItems.map(({ type, Comp, mainColor }) => {
+                return <WithCollapse type={type} {...params} mainColor={mainColor} >
+                    {data => <Comp {...data} items={data[type]} type={type} {...params} />}
+                </WithCollapse>
+            })
+        }
+        {/* <WithCollapse type='subjects' {...params} mainColor={"lightgreen"} >
             {data => <SubjectList subjects={data.subjects} {...params} />}
         </WithCollapse>
         <Divider />
@@ -201,7 +232,7 @@ function MainList(params) {
 
         <WithCollapse type='examples' {...params} mainColor={"orange"}>
             {data => <ExamplesList examples={data.examples} {...params} />}
-        </WithCollapse>
+        </WithCollapse> */}
 
     </Box >
 }

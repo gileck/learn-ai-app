@@ -9,12 +9,14 @@ export const config = {
 
 export default async function handler(req, res) {
     const { exclude } = req.body;
-    console.log({ exclude });
 
 
     const prompt = `
     return an array of random 5 subjects to learn about.
-    return a JSON object with a single key "subjects" that contains an array of strings.
+    return a JSON object with a single key "subjects" that contains an array of subjects.
+    each subject is a an object with 2 keys:
+        1. "name": a string that represents the subject.
+        2. "description": a very short one liner that describes the subject in one sentence.
     ${exclude ? "do not include: " + exclude.join(', ') : ''}
     `;
 

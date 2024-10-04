@@ -1,6 +1,6 @@
 'use client'
 import { AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { localStorageAPI } from './localStorageAPI';
 // Add the following imports
@@ -34,6 +34,15 @@ export default function Home() {
   const [page, setPageInternal] = React.useState(getPageFromUrl() || 'randomSubjects');
   const [dataFetched, setDataFetched] = React.useState(localStorageAPI().getData('dataFetched') || []);
 
+  useEffect(() => {
+    window.addEventListener('popstate', (event) => {
+      // console.log('User navigated back or forward', event);
+      setPageInternal(getPageFromUrl());
+      setRouteInternal(getRouteFromUrl());
+      // Perform your logic here
+    });
+  }, []);
+
   function onDataFetched(data) {
     const apiPrice = data?.apiPrice;
     if (apiPrice > 0) {
@@ -59,7 +68,7 @@ export default function Home() {
     setRouteInUrl(routes);
   }
 
-  const setRoute = (_route) => {
+  const setRoute = (_route, description) => {
 
     if (page !== 'mainSubject') {
       setPage('mainSubject')
@@ -68,7 +77,9 @@ export default function Home() {
     addToHistory({
       subject: _route,
       route: [...route, _route],
-      date: new Date().getTime()
+      date: new Date().getTime(),
+      description
+
     })
     setRouteInternal(prevRoute => [...prevRoute, _route]);
     setRouteInUrl([...route, _route]);

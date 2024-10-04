@@ -43,7 +43,8 @@ export function TextInputWithSend({ onSubmit, placeHolder }) {
                 marginBottom: '8px',
                 borderColor: !input ? 'lightgray' : 'gray',
                 bgcolor: '#46ab46',
-                marginRight: '16px',
+                marginRight: '10px',
+                marginLeft: '10px',
 
             }}
         >

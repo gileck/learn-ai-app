@@ -9,7 +9,7 @@ import { colors } from './utils'; // Import colors
 export function Settings({ setRoutes }) {
     const config = localStorageAPI().getData('learn-ai-config') || {}
     const [state, setState] = React.useState(config);
-    const { language, 'response-length': responseLength, 'response-type': responseType } = state;
+    const { language, 'response-length': responseLength } = state;
 
 
     function onChange(key) {
@@ -53,7 +53,7 @@ export function Settings({ setRoutes }) {
             </FormControl>
 
             {/* Type Selection */}
-            <FormControl fullWidth margin="normal">
+            {/* <FormControl fullWidth margin="normal">
                 <InputLabel id="type-label">Type</InputLabel>
                 <Select
                     onChange={onChange('response-type')}
@@ -63,7 +63,7 @@ export function Settings({ setRoutes }) {
                     <MenuItem value="Bullet points">Bullet points</MenuItem>
                     <MenuItem value="Paragraph">Paragraph</MenuItem>
                 </Select>
-            </FormControl>
+            </FormControl> */}
         </FormGroup>
     </Box >
 }
