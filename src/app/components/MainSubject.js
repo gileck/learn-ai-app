@@ -71,12 +71,19 @@ export function MainSubject({
     async function onLoadMoreClicked(type, exclude, onLoaded) {
         const config = localStorageAPI().getData('learn-ai-config') || {}
 
+
         const response = await fetchWithCache('/api/load', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ type, mainSubject, exclude, config: JSON.stringify(config) }),
+            body: JSON.stringify({
+                type,
+                mainSubject,
+                exclude,
+                config: JSON.stringify(config),
+                route: route.join(', ')
+            }),
             onSuccess: onDataFetched,
             disableFetchInBackground: true,
 
@@ -105,7 +112,14 @@ export function MainSubject({
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ type, mainSubject, params, config: JSON.stringify(config) }),
+            body: JSON.stringify({
+                type,
+                mainSubject,
+                params,
+                config: JSON.stringify(config),
+                route: route.join(', ')
+
+            }),
             onSuccess: onDataFetched,
             disableFetchInBackground: true,
         })

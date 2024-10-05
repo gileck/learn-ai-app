@@ -18,14 +18,14 @@ function parseConfig(configRaw) {
 }
 
 export default async function handler(req, res) {
-    const { type, mainSubject, exclude, config } = req.body
+    const { type, mainSubject, exclude, config, route } = req.body
     console.log({ type, mainSubject, exclude });
 
     const promptByType = {
         "subjects": `
             return an array of 5 subjects (sub topics) related to the subject: ${mainSubject}.
             each subject is an object with 2 keys: 
-                1. "name": a string that represents the subject.
+                1. "name": a string that represents the subject
                 2. "description": a very short one liner that describes the subject in one sentence.
             `,
         "questions": `
@@ -49,6 +49,10 @@ export default async function handler(req, res) {
         My goal is to understand "${mainSubject}" in a comprehensive way.
         
         ${promptByType[type]}
+
+        
+
+        ${route ? "if its not clear from the subject, the subject is about: " + route : ''}
 
         
 

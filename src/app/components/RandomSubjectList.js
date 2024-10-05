@@ -26,6 +26,9 @@ export function RandomSubjectList({ onDataFetched, setRoute }) {
         },
     });
 
+    function onSubjectEntered(subject) {
+        setRoute(subject)
+    }
     function onSubjectClicked(subject) {
         setRoute(subject.name, subject.description)
         const deletedSubjects = localStorageAPI().getData('learn-ai-deletedSubjects') || []
@@ -70,7 +73,7 @@ export function RandomSubjectList({ onDataFetched, setRoute }) {
             }}
         >
             <TextInputWithSend
-                onSubmit={(subject) => onSubjectClicked(subject, colors[0])}
+                onSubmit={(subject) => onSubjectEntered(subject, colors[0])}
                 placeHolder="Enter a subject or ask a question..."
             />
         </Box> : <Box
