@@ -1,8 +1,9 @@
 import React from 'react'; // Import React
-import { Box, List, ListItem, ListItemText, IconButton, Typography, FormControl, InputLabel, Select, MenuItem, FormGroup } from '@mui/material'; // Import MUI components
+import { Box, List, ListItem, ListItemText, IconButton, Typography, FormControl, InputLabel, Select, MenuItem, FormGroup, Button } from '@mui/material'; // Import MUI components
 import Clear from '@mui/icons-material/Clear'; // Import Clear icon
 import { localStorageAPI } from '../localStorageAPI'; // Import localStorageAPI
 import { colors } from './utils'; // Import colors
+import { Delete } from '@mui/icons-material';
 
 
 
@@ -65,5 +66,22 @@ export function Settings({ setRoutes }) {
                 </Select>
             </FormControl> */}
         </FormGroup>
+        <Button
+            variant='contained'
+            color='error'
+            startIcon={<Delete />}
+            onClick={() => {
+                localStorageAPI().cleanData('learn-ai-config');
+                localStorageAPI().cleanData('learn-ai-deletedSubjects');
+                localStorageAPI().cleanData('history');
+                localStorageAPI().cleanData('fetchCache');
+
+
+                setState({});
+            }}
+        >
+            Clear Cache
+        </Button>
     </Box >
+
 }
