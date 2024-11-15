@@ -15,6 +15,9 @@ import { Menu } from './components/Menu';
 import { AppTopBar } from './components/AppTopBar';
 import { Settings } from './components/Settings';
 import { Process } from './components/Process';
+import { Education } from './components/Education';
+import { Course } from './components/Course';
+import { Topic } from './components/Topic';
 
 
 const staticSubjects = [
@@ -44,6 +47,17 @@ export default function Home() {
     });
   }, []);
 
+  function getParamsFromURL() {
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
+    const paramsObj = {};
+    for (const [key, value] of params) {
+      paramsObj[key] = value;
+    }
+    return paramsObj;
+  }
+
+
   function onDataFetched(data) {
     const apiPrice = data?.apiPrice;
     if (apiPrice > 0) {
@@ -55,9 +69,11 @@ export default function Home() {
     }
   }
 
-  const setPage = (page) => {
+  const setPage = (page, params = {}) => {
     // console.log({ page });
-    history.pushState({}, '', `${window.location.pathname}?page=${page}`);
+    const paramsString = Object.keys(params).map(key => `${key}=${params[key]}`).join('&');
+    console.log({ paramsString, params });
+    window.history.pushState({}, '', `${window.location.pathname}?page=${page}&${paramsString}`);
     setPageInternal(page);
     setRouteInternal([]);
     window.scrollTo(0, 0);
@@ -100,8 +116,10 @@ export default function Home() {
     route,
     setRoute,
     setRoutes,
+    setPage,
     setBackRoute,
     onDataFetched,
+    params: getParamsFromURL()
   }
 
   const Comps = {
@@ -109,7 +127,11 @@ export default function Home() {
     randomSubjects: RandomSubjectList,
     history: History,
     settings: Settings,
-    process: Process
+    process: Process,
+    education: Education,
+    course: Course,
+    topic: Topic
+
   }
   const Comp = Comps[page] || RandomSubjectList;
 

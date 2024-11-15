@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { Box, TextField, IconButton } from '@mui/material';
 import SendRounded from '@mui/icons-material/SendRounded';
 
-export function TextInputWithSend({ onSubmit, placeHolder }) {
-    const [input, setInput] = React.useState('');
+export function TextInputWithSend({ onSubmit, placeHolder, value }) {
+    const [input, setInput] = React.useState(value || '');
     useEffect(() => {
         const callback = (e) => {
             if (e.key === 'Enter') {
