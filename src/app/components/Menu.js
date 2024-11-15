@@ -28,6 +28,7 @@ export function Menu({ setPage }) {
         >
             <MenuItem onClick={() => handleNavigation('history')}>History</MenuItem>
             <MenuItem onClick={() => handleNavigation('settings')}>Settings</MenuItem>
+            <MenuItem onClick={() => handleNavigation('process')}>Process</MenuItem>
         </MenuComp>
     </Box>
 }

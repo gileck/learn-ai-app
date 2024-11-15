@@ -14,6 +14,7 @@ import { addToHistory, onDataFetched } from './components/utils';
 import { Menu } from './components/Menu';
 import { AppTopBar } from './components/AppTopBar';
 import { Settings } from './components/Settings';
+import { Process } from './components/Process';
 
 
 const staticSubjects = [
@@ -107,7 +108,8 @@ export default function Home() {
     mainSubject: MainSubject,
     randomSubjects: RandomSubjectList,
     history: History,
-    settings: Settings
+    settings: Settings,
+    process: Process
   }
   const Comp = Comps[page] || RandomSubjectList;
 

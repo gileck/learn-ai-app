@@ -13,10 +13,8 @@ export function SubjectList({ onSubjectClicked, mainColor, subjects, onLoadMoreC
     }, [subjects]);
 
     return (
-        <Box sx={{
-        }}>
-            <List sx={{
-            }} >
+        <Box sx={{}}>
+            <List sx={{}} >
                 {(subjectList || []).map((subject, index) => (
                     <ListItem
                         key={subject.name}

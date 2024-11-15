@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Box, Typography, Collapse, LinearProgress } from '@mui/material';
 import { ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
 
-export function WithCollapse({ mainSubject, children, type, mainColor, loadData, title, showArrow }) {
+export function WithCollapse({ description, mainSubject, children, type, mainColor, loadData, title, showArrow }) {
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [data, setData] = React.useState(null);
@@ -23,13 +23,15 @@ export function WithCollapse({ mainSubject, children, type, mainColor, loadData,
             <Box
                 onClick={() => {
                     setOpen(!open)
-                    if (!data) {
+                    if (!data && loadData) {
                         setLoading(true)
                         loadData({ type, title }).then((response) => {
                             // console.log(response.result);
                             setData(response.result)
                             setLoading(false)
                         })
+                    } else {
+                        setData(null)
                     }
                 }}
                 sx={{
@@ -42,18 +44,30 @@ export function WithCollapse({ mainSubject, children, type, mainColor, loadData,
                     width: '100%',
                 }}
             >
-                <Typography>
-                    {_title}
-                </Typography>
+
+                <Box>
+                    <Typography> {_title}</Typography>
+                    <Typography
+
+                        sx={{
+                            color: 'gray'
+                        }}>{description}
+
+                    </Typography>
+                </Box>
+
+
+
                 {
                     showArrow ? (open ? <ArrowDropUp /> : <ArrowDropDown />) : ''
                 }
             </Box>
             {loading ? <LinearProgress /> : ''}
 
-            <Collapse in={open && data}>
+            <Collapse in={open && ((loadData && data) || !loadData)} >
                 <Box>
-                    {data && children(data)}
+                    {loadData && data && children(data)}
+                    {!loadData && children}
                 </Box>
 
             </Collapse>

@@ -128,7 +128,6 @@ export function MainSubject({
 
     const params = {
 
-        description,
         mainColor,
         route,
         setRoute,

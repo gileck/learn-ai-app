@@ -144,3 +144,39 @@ export async function getResponseFromGpt({ system, inputText, isJSON, model }) {
 
 
 }
+
+const imageCosts = {
+    'dall-e-3': {
+        '1024x1024': 0.040 * 3.7,
+    },
+    'dall-e-2': {
+        '1024x1024': 0.020 * 3.7,
+        '512x512': 0.018 * 3.7,
+        '256x256': 0.016 * 3.7,
+    }
+}
+
+export async function generateImage({
+    prompt
+}) {
+    try {
+        const modelToUse = 'dall-e-2'
+        const size = "256x256"
+        const response = await openai.images.generate({
+            model: modelToUse,
+            prompt,
+            n: 1,
+            size,
+            quality: 'standard'
+        });
+
+        const price = imageCosts[modelToUse][size]
+        const imageUrl = response.data[0].url;
+        return {
+            url: imageUrl,
+            apiPrice: price
+        }
+    } catch (error) {
+        console.error("Error generating image:", error);
+    }
+}
