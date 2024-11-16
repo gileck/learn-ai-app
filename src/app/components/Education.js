@@ -3,13 +3,12 @@ import { Box, Divider, LinearProgress, List, ListItem, ListItemText } from "@mui
 import { TextInputWithSend } from "./TextInputWithSend";
 import { fetchWithCache } from "../useFetch";
 import { SubjectList } from "./SubjectList";
-import { ItemsList } from "./ItemsList";
 import { getColor } from "./utils";
 import { WithCollapse } from "./WithCollapse";
 
 
 export function Education({ setPage }) {
-    const [courses, setData] = React.useState(null);
+    const [degrees, setData] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const [mainSubject, setMainSubject] = React.useState(null);
     async function onSubmit(text) {
@@ -29,13 +28,12 @@ export function Education({ setPage }) {
         })
 
         console.log(result);
-        setData(result.courses)
+        setData(result.degrees)
         setMainSubject(text)
         setLoading(false)
     }
-    function onCourseClicked(course) {
-        console.log({ course });
-        setPage('course', { course, degree: mainSubject })
+    function onClick(degree) {
+        setPage('degree', { degree: degree })
 
     }
     return (
@@ -54,12 +52,12 @@ export function Education({ setPage }) {
                 />
             </Box>
             {loading && <LinearProgress />}
-            {courses && <ProcessList processArray={courses} title={mainSubject} onCourseClicked={onCourseClicked} />}
+            {degrees && <ProcessList processArray={degrees} title={mainSubject} onClick={onClick} />}
         </Box>
     )
 }
 
-function ProcessList({ processArray, title, onCourseClicked }) {
+function ProcessList({ processArray, title, onClick }) {
     return (
         <Box>
             <Box sx={{}}>
@@ -71,7 +69,7 @@ function ProcessList({ processArray, title, onCourseClicked }) {
                         <ListItem
 
                             key={subject.name}
-                            onClick={() => onCourseClicked(subject.title)}
+                            onClick={() => onClick(subject.title)}
 
                             sx={{
                                 bgcolor: getColor({ index }),

@@ -18,6 +18,9 @@ import { Process } from './components/Process';
 import { Education } from './components/Education';
 import { Course } from './components/Course';
 import { Topic } from './components/Topic';
+import { SubTopic } from './components/subTopic';
+import { AppContext } from './AppContext';
+import { Degree } from './components/Degree';
 
 
 const staticSubjects = [
@@ -77,6 +80,10 @@ export default function Home() {
     setPageInternal(page);
     setRouteInternal([]);
     window.scrollTo(0, 0);
+
+    // if (page === 'mainSubject') {
+    //   setRoute(params.route)
+    // }
   }
 
   const setRoutes = (routes) => {
@@ -129,22 +136,24 @@ export default function Home() {
     settings: Settings,
     process: Process,
     education: Education,
-    course: Course,
-    topic: Topic
+    degree: Degree
 
   }
   const Comp = Comps[page] || RandomSubjectList;
 
 
   return (
+
     <>
-      <AppTopBar
-        setPage={setPage}
-        dataFetched={dataFetched}
-      />
-      <Box sx={{}}>
-        <Comp {...params} />
-      </Box>
+      <AppContext>
+        <AppTopBar
+          setPage={setPage}
+          dataFetched={dataFetched}
+        />
+        <Box sx={{}}>
+          <Comp {...params} />
+        </Box>
+      </AppContext>
     </>
   );
 }

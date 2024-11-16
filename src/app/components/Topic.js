@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Divider, LinearProgress, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Divider, LinearProgress, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { TextInputWithSend } from "./TextInputWithSend";
 import { fetchWithCache, useFetch } from "../useFetch";
 import { SubjectList } from "./SubjectList";
@@ -9,100 +9,64 @@ import { WithCollapse } from "./WithCollapse";
 import { TextBox } from "./TextBox";
 
 
-export function Topic({ setPage, params }) {
-    const course = params.course
-    const degree = params.degree
-    const topic = params.topic
-    console.log({
-        course,
-        degree,
-        topic
-    });
-    const { data, loading } = useFetch('/api/topic', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            course,
-            degree,
-            topic
-        }),
-        disableFetchInBackground: false,
+export function Topic({ currentCourseIndex, courses, correntTopicIndex, setSubTopic }) {
+    const topic = courses[currentCourseIndex].topics[correntTopicIndex]
 
-    })
-    console.log({ data });
-    const subTopics = data?.result?.subTopics
-    const overview = data?.result?.overview
-    // const [subjects, setData] = React.useState(null);
-    // const [loading, setLoading] = React.useState(false);
-    // const [mainSubject, setMainSubject] = React.useState(null);
-    // async function onSubmit(text) {
-    //     setLoading(true)
-    //     console.log(text);
-    //     const { result, apiPrice } = await fetchWithCache('/api/course', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({
-    //             mainSubject: text
-    //         }),
-    //         disableFetchInBackground: true,
-    //         // shouldUsecache: false
-
-    //     })
-
-    //     console.log(result);
-    //     setData(result.subjects)
-    //     setMainSubject(text)
-    //     setLoading(false)
-    // }
-    function onCourseClicked(topic) {
-        console.log({ topic });
-        setPage('topic', { topic, course, degree })
-
-    }
     return (
         <Box>
-
-            {loading && <LinearProgress />}
-            <h1>{topic}</h1>
-
-            <Box
-                sx={{
-                    bgcolor: getColor({ index: 1 }),
-                    p: 1,
-                    paddingLeft: 2,
-                    mb: 1,
-                    borderRadius: 1,
-                    width: '500px',
-                    lineHeight: "24px",
-                    whiteSpace: "pre-line",
-                    p: 1,
-                }}
-            >
-
-                {overview}
-
-            </Box>
-            {subTopics && <ProcessList processArray={subTopics} title={topic} onCourseClicked={onCourseClicked} />}
+            <TopicData data={topic} onCourseClicked={(subTopic, index) => setSubTopic({
+                subTopic,
+                subTopicIndex: index,
+                topicIndex: correntTopicIndex,
+                courseIndex: currentCourseIndex
+            })} />
         </Box>
     )
 }
 
-function ProcessList({ processArray, title, onCourseClicked }) {
+function TopicData({ data, onCourseClicked }) {
+    const { description, subTopics } = data
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+            }}
+        >
+            <Box
+                sx={{
+                    bgcolor: getColor({ index: 3 }),
+                    p: 1,
+                    paddingLeft: 2,
+                    lineHeight: "24px",
+
+                }}
+            >
+                {description}
+            </Box>
+            <Box>
+
+                <TopicList items={subTopics} title='Topics' onCourseClicked={onCourseClicked} />
+
+            </Box>
+
+        </Box>
+    )
+}
+
+function TopicList({ items, title, onCourseClicked }) {
     return (
         <Box>
             <Box sx={{}}>
                 <List sx={{
                     width: '500px',
                 }}>
-                    {(processArray || []).map((subject, index) => (
+                    {(items || []).map((subject, index) => (
                         <ListItem
 
                             key={subject.name}
-                            onClick={() => onCourseClicked(subject.title)}
+                            onClick={() => onCourseClicked(subject.title, index)}
 
                             sx={{
                                 bgcolor: getColor({ index }),

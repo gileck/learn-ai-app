@@ -9,10 +9,7 @@ import { colors } from './utils';
 
 
 export function ItemsList({ type, items, mainColor, setRoute, onLoadMoreClicked, loadItem }) {
-    console.log({ items });
     const [itemsList, setItemsList] = React.useState(items);
-    console.log({ itemsList });
-
     return (
         <Box>
             <List sx={{}}>

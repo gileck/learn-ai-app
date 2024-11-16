@@ -22,16 +22,17 @@ export default async function handler(req, res) {
     console.log({ topic, course, degree });
 
     const prompt = `    
+        
         I am taking a university level (ivy league) course on "${course}" as a part the Undergraduate Major in "${degree}".
-        I want to learn about "${topic}" as part of the course.
+        you need to generate the content of the lecture: "${topic}" in the course "${course}" in ivy league university.
+        only add the content that will be discussed in the lecture about ${topic} in the course ${course}.
+        
 
-        Write an overview of the topic "${topic}" in the course "${course}" in ivy league university.
-        Add everything I need to know about the topic "${topic}" in the course "${course}" in ivy league university.
-
-        Return a JSON object with 2 keys:
-            1. "title": a string that represents the title of the topic.
-            2. "overview": a short overview of the topic
-            3. subTopics: a JSON array of subtopics that are part of the topic. Each subtopic should have a title and a description.
+        Return a JSON object with the following keys:
+            "overview": a short overview of the topic: ${topic}
+            "introduction": a short introduction to: ${topic}
+            "subTopics": a JSON array of subtopics that are part of the topic in the context of the class. Each subtopic should have a title and a description. add only sub topics that will be discussed in the class.
+            "questions": a JSON array of questions that can be asked in the exam on the topic. Each question should have a title and a description.
 
         The topics should be in the order that I need to take them in the course (from basic to advanced).
     `;

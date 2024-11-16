@@ -8,7 +8,7 @@ import { TextInputWithSend } from './TextInputWithSend'; // Added TextInputWithS
 
 export function QuestionsList({ mainSubject, questions, mainColor, onQuestionClicked, setRoute, onLoadMoreClicked }) {
 
-    console.log({ mainSubject, questions });
+    // console.log({ mainSubject, questions });
 
 
 

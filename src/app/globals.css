@@ -1,6 +1,13 @@
 :root {
   font-family: 'arial';
+
 }
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
 
 /* :root {
   --background: #ffffff;

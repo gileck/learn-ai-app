@@ -3,7 +3,6 @@ import { Box, Divider, LinearProgress, List, ListItem, ListItemText } from "@mui
 import { TextInputWithSend } from "./TextInputWithSend";
 import { fetchWithCache } from "../useFetch";
 import { SubjectList } from "./SubjectList";
-import { ItemsList } from "./ItemsList";
 import { getColor } from "./utils";
 import { WithCollapse } from "./WithCollapse";
 

@@ -29,7 +29,8 @@ export function MainSubject({
         shouldUsecache: true,
         overrideStaleTime: 1000 * 60 * 60 * 24 * 7 * 3, // 3 week
         disableFetchInBackground: true,
-        onSuccess: onDataFetched
+        onSuccess: onDataFetched,
+        shouldUsecache: false
     });
     const { result, apiPrice } = data || {};
     // console.log({ result, apiPrice });

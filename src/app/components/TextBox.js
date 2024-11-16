@@ -12,9 +12,9 @@ export function TextBox({ text, title, setRoute }) {
         return <></>
     }
 
-    const lines = text.split('. ').filter(Boolean).map(line => {
-        return `• ${line.trim()}.`
-    }).join('\n ')
+    // const lines = text.split('. ').filter(Boolean).map(line => {
+    //     return `• ${line.trim()}.`
+    // }).join('\n ')
 
 
     return <Box
@@ -27,7 +27,7 @@ export function TextBox({ text, title, setRoute }) {
     >
 
         <Typography>
-            {lines}
+            {text}
             {title ? <div>
                 Read more about <span onClick={() => setRoute(title)} style={{ color: 'blue' }}>{title}</span>
             </div> : ''}
