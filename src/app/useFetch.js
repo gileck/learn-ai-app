@@ -17,6 +17,12 @@ const saveToCache = (url, data) => {
     cache[url] = dataClone;
     saveData('fetchCache', cache);
 }
+export const deleteCache = async (_url, options = {}) => {
+    const cacheKey = await getCacheKey(_url, options);
+    delete cache[cacheKey];
+    saveData('fetchCache', cache);
+    console.log('Cache deleted', cacheKey);
+}
 
 function getDataFromCache(url, overrideStaleTime) {
     const data = getFromCache(url);

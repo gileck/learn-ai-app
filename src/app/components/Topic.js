@@ -7,18 +7,20 @@ import { ItemsList } from "./ItemsList";
 import { getColor } from "./utils";
 import { WithCollapse } from "./WithCollapse";
 import { TextBox } from "./TextBox";
+import { Check, CheckBoxRounded, CheckCircleRounded, CheckRounded } from "@mui/icons-material";
 
 
 export function Topic({ currentCourseIndex, courses, correntTopicIndex, setSubTopic }) {
     const topic = courses[currentCourseIndex].topics[correntTopicIndex]
-
     return (
         <Box>
             <TopicData data={topic} onCourseClicked={(subTopic, index) => setSubTopic({
                 subTopic,
                 subTopicIndex: index,
                 topicIndex: correntTopicIndex,
-                courseIndex: currentCourseIndex
+                courseIndex: currentCourseIndex,
+                courses,
+                topic: topic.title
             })} />
         </Box>
     )
@@ -81,7 +83,17 @@ function TopicList({ items, title, onCourseClicked }) {
 
                             <ListItemText
                                 // onClick={() => onClick(subject, colors.filter(c => c !== mainColor)[index])}
-                                primary={subject.title}
+                                primary={<Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        flexDirection: 'row',
+                                    }}
+                                >
+
+                                    {subject.title}
+                                    {subject.completed && <CheckCircleRounded sx={{ color: 'green' }} />}
+                                </Box>}
                                 secondary={subject.description}
 
 

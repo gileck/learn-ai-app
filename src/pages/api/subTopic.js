@@ -34,6 +34,7 @@ export default async function handler(req, res) {
                 The description should be a detailed explanation of the concept. should be at least 3 paragraphs long. be as detailed as possible. be sure to include all the important points.
 
             "questions": a JSON array of questions that can be asked in the exam on the topic. Each question should have a title and a description.
+            "examples: a JSON array of real world examples that can be used to explain the concepts. Each example should have a title and a description.
             
     `;
 

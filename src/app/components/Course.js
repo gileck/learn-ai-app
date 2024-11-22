@@ -5,6 +5,7 @@ import { fetchWithCache, useFetch } from "../useFetch";
 import { SubjectList } from "./SubjectList";
 import { getColor } from "./utils";
 import { WithCollapse } from "./WithCollapse";
+import { CheckCircleRounded } from "@mui/icons-material";
 
 
 export function Course({ currentCourseIndex, courses, setTopic }) {
@@ -46,7 +47,17 @@ function ProcessList({ processArray, title, onTopicClicked }) {
 
                             <ListItemText
                                 // onClick={() => onClick(subject, colors.filter(c => c !== mainColor)[index])}
-                                primary={subject.title}
+                                primary={<Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        flexDirection: 'row',
+                                    }}
+                                >
+
+                                    {subject.title}
+                                    {subject.completed && <CheckCircleRounded sx={{ color: 'green' }} />}
+                                </Box>}
                                 secondary={subject.description}
 
 
