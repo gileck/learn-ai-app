@@ -32,6 +32,22 @@ const staticSubjects = [
   "Cultural Anthropology"
 ]
 
+function Settings() {
+  return (
+    <Box>
+      <Typography variant='h4'>Settings</Typography>
+      <Button
+        onClick={() => {
+          localStorageAPI().clear()
+          window.location.reload()
+        }}
+      >
+        CLEAN LOCAL STORAGE
+      </Button>
+    </Box>
+  )
+}
+
 
 
 export default function Home() {
@@ -138,7 +154,8 @@ export default function Home() {
     process: Process,
     education: Education,
     degree: Degree,
-    searchDegree: SearchDegree
+    searchDegree: SearchDegree,
+    settings: Settings
 
   }
   const Comp = Comps[page] || RandomSubjectList;
