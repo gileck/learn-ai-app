@@ -71,6 +71,91 @@ export function Degree({ setPage, params: { degree } }) {
     useEffect(() => {
         saveStateInLocalStorage(degree, state)
     }, [state])
+
+    function getData(type, params) {
+        return fetchWithCache('/api/' + type, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params),
+            disableFetchInBackground: true,
+        })
+    }
+
+    function preloadNextItem(view) {
+        if (view === 'degree') {
+            const { courses } = state
+            const nextCourseIndexWithoutData = courses.findIndex(c => !c.completed)
+            if (nextCourseIndexWithoutData === -1) {
+                return
+            }
+            const course = courses[nextCourseIndexWithoutData]
+            // console.log({ course });
+            if (!course.topics) {
+                // setCourseTopics({ course: course.title, courseIndex: nextCourseIndexWithoutData })
+                getData('course', { degree, course: course.title }).then(data => {
+                    const topics = data?.result?.topics
+                    setTopicsState({
+                        courseIndex: nextCourseIndexWithoutData,
+                        topics,
+                    })
+                })
+            }
+        }
+        if (view === 'course') {
+            const { courses } = state
+            const { topics } = courses[state.currentCourseIndex]
+            const nextTopicIndexWithoutData = topics.findIndex(t => !t.completed)
+            if (nextTopicIndexWithoutData === -1) {
+                return
+            }
+            const topic = topics[nextTopicIndexWithoutData]
+            // console.log({ topic });
+            if (!topic.subTopics) {
+                // setTopic({ topic: topic.title, topicIndex: nextTopicIndexWithoutData, courseIndex: state.currentCourseIndex })
+                getData('topic', { degree, course: courses[state.currentCourseIndex].title, topic: topic.title }).then(data => {
+                    const subTopics = data?.result?.subTopics
+                    setSubTopicsState({
+                        subTopics,
+                        topicIndex: nextTopicIndexWithoutData,
+                        courseIndex: state.currentCourseIndex
+                    })
+                })
+            }
+        }
+        if (view === 'topic') {
+            const { courses } = state
+            const { subTopics } = courses[state.currentCourseIndex].topics[state.correntTopicIndex]
+            const nextSubTopicIndexWithoutData = subTopics.findIndex(s => !s.completed)
+            if (nextSubTopicIndexWithoutData === -1) {
+                return
+            }
+            const subTopic = subTopics[nextSubTopicIndexWithoutData]
+            // console.log({ subTopic });
+            if (!subTopic.data) {
+                // setSubTopic({ courses, topic: courses[state.currentCourseIndex].topics[state.correntTopicIndex].title, topicIndex: state.correntTopicIndex, courseIndex: state.currentCourseIndex, subTopicIndex: nextSubTopicIndexWithoutData, subTopic: subTopic.title })
+                getData('subTopic', {
+                    degree,
+                    course: courses[state.currentCourseIndex].title,
+                    topic: courses[state.currentCourseIndex].topics[state.correntTopicIndex].title,
+                    subTopic: subTopic.title
+                }).then(data => {
+                    setSubTopicDataState({
+                        courses,
+                        subTopic: data?.result,
+                        topicIndex: state.correntTopicIndex,
+                        courseIndex: state.currentCourseIndex,
+                        subTopicIndex: nextSubTopicIndexWithoutData
+                    })
+                })
+            }
+        }
+    }
+    useEffect(() => {
+        preloadNextItem(view)
+    })
+
     function setState(newState) {
         _setState(oldState => ({ ...oldState, ...newState }))
     }
@@ -96,6 +181,7 @@ export function Degree({ setPage, params: { degree } }) {
             })
         }
     }
+
     function setSubTopicDataState({ courses: _courses, subTopic, topicIndex, subTopicIndex, courseIndex }) {
         const courses = _courses.map((c, index) => {
             if (index === courseIndex) {
@@ -126,7 +212,7 @@ export function Degree({ setPage, params: { degree } }) {
             courses,
             currentSubTopicIndex: subTopicIndex,
             loading: false,
-            view: 'subTopic'
+
         })
     }
     function setSubTopicsState({ subTopics, topicIndex, courseIndex }) {
@@ -171,13 +257,11 @@ export function Degree({ setPage, params: { degree } }) {
                 currentCourseIndex: courseIndex,
                 course: courses[courseIndex].title,
                 loading: false,
-                view: 'course'
             })
         } else {
             setState({
                 currentCourseIndex: courseIndex,
                 loading: false,
-                view: 'course'
             })
         }
 
@@ -317,6 +401,26 @@ export function Degree({ setPage, params: { degree } }) {
     }, [degree])
 
 
+    async function setCourseTopics({ course, courseIndex }) {
+        setLoading(true)
+        const data = await fetchWithCache('/api/course', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                degree,
+                course
+            }),
+            disableFetchInBackground: true,
+            // shouldUseCache: false
+        })
+        const topics = data?.result?.topics
+        setTopicsState({
+            courseIndex,
+            topics,
+        })
+    }
     async function setCourse({ course, courseIndex }) {
         if (courses[courseIndex].topics) {
             setState({
@@ -324,23 +428,9 @@ export function Degree({ setPage, params: { degree } }) {
                 view: 'course',
             })
         } else {
-            setLoading(true)
-            const data = await fetchWithCache('/api/course', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    degree,
-                    course
-                }),
-                disableFetchInBackground: true,
-                // shouldUseCache: false
-            })
-            const topics = data?.result?.topics
-            setTopicsState({
-                courseIndex,
-                topics
+            setCourseTopics({ course, courseIndex })
+            setState({
+                view: 'course',
             })
         }
 
@@ -381,6 +471,7 @@ export function Degree({ setPage, params: { degree } }) {
             setState({
                 currentSubTopicIndex: subTopicIndex,
                 view: 'subTopic',
+                courses
             })
 
         } else {
@@ -405,6 +496,9 @@ export function Degree({ setPage, params: { degree } }) {
                 topicIndex,
                 courseIndex,
                 subTopicIndex
+            })
+            setState({
+                view: 'subTopic'
             })
         }
         const subTopics = courses[courseIndex].topics[topicIndex].subTopics
@@ -439,6 +533,13 @@ export function Degree({ setPage, params: { degree } }) {
             subTopic: "Sub Topic",
         }
 
+        const viewTitleValue = {
+            degree,
+            course,
+            topic,
+            subTopic
+        }
+
         const indexesByView = {
             course: {
                 index: () => state.currentCourseIndex + 1,
@@ -470,15 +571,25 @@ export function Degree({ setPage, params: { degree } }) {
                 <IconButton onClick={() => goBack()} disabled={view === 'degree'}>
                     <ArrowBackIosNew />
                 </IconButton>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Typography variant='h4'>{viewTitleValue[view]}</Typography>
+                    {view !== 'degree' && <Typography variant='h6' sx={{ color: 'gray' }}> {viewTitle[view]} {indexesByView[view].index()} / {indexesByView[view].length()} </Typography>}
+                    {view === 'degree' && <Typography variant='h6' sx={{ color: 'gray' }}> Degree </Typography>}
+                </Box>
 
-                {view !== 'degree' && <Typography variant='h6' sx={{ color: 'gray' }}> {viewTitle[view]} {indexesByView[view].index()} / {indexesByView[view].length()} </Typography>}
-                {view === 'degree' && <Typography variant='h6' sx={{ color: 'gray' }}> Degree </Typography>}
+
                 <div></div>
                 {/* <IconButton onClick={() => next()} disabled={view === 'degree'}>
                     <ArrowForwardIos />
                 </IconButton> */}
             </Box>
-            <Box
+            {/* <Box
                 sx={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -487,7 +598,7 @@ export function Degree({ setPage, params: { degree } }) {
             >
                 <Typography variant='h4'>{subTopic || topic || course || degree}</Typography>
 
-            </Box>
+            </Box> */}
 
 
             {/* <Typography variant='h8' color={'gray'}>
@@ -550,11 +661,11 @@ export function Degree({ setPage, params: { degree } }) {
 
 
     const params = {
+        ...state,
         courses,
         setCourse,
         setTopic,
         setSubTopic,
-        ...state,
         markSuptopicAsCompleted,
         setLoading,
         goToPreviousSubTopic,

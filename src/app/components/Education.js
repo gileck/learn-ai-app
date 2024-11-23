@@ -1,102 +1,69 @@
 import React from "react";
-import { Box, Divider, LinearProgress, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Button, Divider, Icon, IconButton, LinearProgress, List, ListItem, ListItemSecondaryAction, ListItemText } from "@mui/material";
 import { TextInputWithSend } from "./TextInputWithSend";
 import { fetchWithCache } from "../useFetch";
 import { SubjectList } from "./SubjectList";
 import { getColor } from "./utils";
 import { WithCollapse } from "./WithCollapse";
-
-
-export function Education({ setPage }) {
-    const [degrees, setData] = React.useState(null);
-    const [loading, setLoading] = React.useState(false);
-    const [mainSubject, setMainSubject] = React.useState(null);
-    async function onSubmit(text) {
-        setLoading(true)
-        console.log(text);
-        const { result, apiPrice } = await fetchWithCache('/api/education', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                mainSubject: text
-            }),
-            disableFetchInBackground: true,
-            // shouldUsecache: false
-
-        })
-
-        console.log(result);
-        setData(result.degrees)
-        setMainSubject(text)
-        setLoading(false)
-    }
-    function onClick(degree) {
-        setPage('degree', { degree: degree })
-
-    }
-    return (
-        <Box>
-
-
-            <Box
-                sx={{
-                    mt: 2,
-                }}
-            >
-                <TextInputWithSend
-                    value={'Biology'}
-                    onSubmit={onSubmit}
-                    placeHolder='Enter a process'
-                />
-            </Box>
-            {loading && <LinearProgress />}
-            {degrees && <ProcessList processArray={degrees} title={mainSubject} onClick={onClick} />}
-        </Box>
-    )
+import { Degree } from "./Degree";
+import { calculateOverrideValues } from "next/dist/server/font-utils";
+import { Delete } from "@mui/icons-material";
+function getStateFromLocalStorage() {
+    return JSON.parse(localStorage.getItem('appState')) || {}
 }
+function calculateCourseCompleted(degree) {
+    const { courses } = degree
+    return `${courses.filter(c => c.completed).length}/${courses.length}`
+}
+export function Education({ setPage }) {
+    const activeDegrees = getStateFromLocalStorage()
+    console.log({ activeDegrees });
 
-function ProcessList({ processArray, title, onClick }) {
+
     return (
         <Box>
-            <Box sx={{}}>
-                <h1>{title}</h1>
-                <List sx={{
-                    width: '500px',
-                }}>
-                    {(processArray || []).map((subject, index) => (
-                        <ListItem
-
-                            key={subject.name}
-                            onClick={() => onClick(subject.title)}
-
+            <List>
+                {
+                    Object.entries(activeDegrees).map(([name, value], index) => {
+                        return <ListItem
+                            onClick={() => setPage('degree', { degree: name })}
                             sx={{
                                 bgcolor: getColor({ index }),
                                 p: 1,
                                 paddingLeft: 2,
                                 mb: 1,
                                 borderRadius: 1,
-                                width: '500px',
-                            }}>
-
-
-
+                            }}
+                        >
                             <ListItemText
-                                // onClick={() => onClick(subject, colors.filter(c => c !== mainColor)[index])}
-                                primary={subject.title}
-                                secondary={subject.description}
-
+                                primary={name}
+                                secondary={calculateCourseCompleted(value)}
 
                             />
-
+                            <ListItemSecondaryAction>
+                                <IconButton
+                                    onClick={() => {
+                                        const shouldDelete = confirm('Are you sure you want to delete this degree?')
+                                        if (!shouldDelete) return
+                                        const newState = { ...activeDegrees }
+                                        delete newState[name]
+                                        localStorage.setItem('appState', JSON.stringify(newState))
+                                        window.location.reload()
+                                    }}
+                                    edge="end" aria-label="delete">
+                                    <Delete />
+                                </IconButton>
+                            </ListItemSecondaryAction>
                         </ListItem>
-                    ))}
-
-                </List>
-            </Box>
-
-
+                    })
+                }
+            </List>
+            <Button
+                onClick={() => setPage('searchDegree')}
+            >
+                Add Degree
+            </Button>
         </Box>
     )
+
 }

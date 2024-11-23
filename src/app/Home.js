@@ -16,6 +16,7 @@ import { AppTopBar } from './components/AppTopBar';
 import { Settings } from './components/Settings';
 import { Process } from './components/Process';
 import { Education } from './components/Education';
+import { SearchDegree } from './components/SearchDegree';
 import { Course } from './components/Course';
 import { Topic } from './components/Topic';
 import { SubTopic } from './components/subTopic';
@@ -136,7 +137,8 @@ export default function Home() {
     settings: Settings,
     process: Process,
     education: Education,
-    degree: Degree
+    degree: Degree,
+    searchDegree: SearchDegree
 
   }
   const Comp = Comps[page] || RandomSubjectList;

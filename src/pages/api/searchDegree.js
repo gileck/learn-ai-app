@@ -23,10 +23,11 @@ export default async function handler(req, res) {
 
     const prompt = `    
         I want to start a university level (ivy league) degree on the subject "${mainSubject}".
-        Return a JSON array of all degrees that ivy league universities offer in order to learn about "${mainSubject}".
+        Return a JSON array of most popular degrees (top 5-6) that ivy league universities offer in order to learn about "${mainSubject}".
+        No need to differentiate between the masters and bachelors, PHD degrees or any other type of degree.
 
         Return a JSON object with 1 key named "degrees" - the array of degrees, with each degree being an object with 2 keys:
-            1. "title": a string that represents the title of the degree.
+            1. "title": a string that represents the title of the degree (just the subject, no types of degrees).
             2. "description": a very short one liner that describes the degree in one sentence.
 
     `;

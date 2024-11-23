@@ -149,7 +149,7 @@ export async function fetchWithCache(_url, options = {}) {
             }
             return data;
         }).finally(() => {
-            delete fetchPromiseCache[url]
+            delete fetchPromiseCache[cacheKey]
         })
     return fetchPromiseCache[cacheKey]
 }
