@@ -243,7 +243,6 @@ export function Degree({ setPage, params: { degree } }) {
             currentCourseIndex: courseIndex,
             correntTopicIndex: topicIndex,
             loading: false,
-            view: 'topic'
         })
     }
     function setTopicsState({ courseIndex, topics }) {
@@ -467,6 +466,9 @@ export function Degree({ setPage, params: { degree } }) {
                 subTopics,
                 topicIndex,
                 courseIndex
+            })
+            setState({
+                view: 'topic'
             })
         }
     }
