@@ -282,7 +282,7 @@ export function Degree({ setPage, params: { degree } }) {
                 topicIndex: state.correntTopicIndex,
                 courseIndex: state.currentCourseIndex,
                 subTopicIndex: state.currentSubTopicIndex + 1,
-                subTopic: courses[state.currentCourseIndex].topics[state.correntTopicIndex].subTopics[state.currentSubTopicIndex + 1]
+                subTopic: courses[state.currentCourseIndex].topics[state.correntTopicIndex].subTopics[state.currentSubTopicIndex + 1].title
             })
         }
     }

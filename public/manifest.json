@@ -1,0 +1,13 @@
+{
+    "short_name": "Learn AI",
+    "name": "Learn AI",
+    "icons": [
+        {
+            "src": "/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "/",
+    "display": "standalone"
+}
