@@ -9,6 +9,8 @@ import { Course } from "./Course";
 import { Topic } from "./Topic";
 import { SubTopic } from "./subTopic";
 import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
+import { localStorageAPI } from "../localStorageAPI";
+const localStorage = localStorageAPI()
 
 const Views = {
     degree: DegreeView,
@@ -38,7 +40,8 @@ function DegreeView({ setCourse, courses }) {
 }
 
 function getStateFromLocalStorage(degree) {
-    const currentState = JSON.parse(localStorage.getItem('appState')) || {}
+
+    const currentState = localStorage.getData('appState')
     if (!currentState[degree]) {
         return null
     } else {
@@ -50,7 +53,7 @@ function saveStateInLocalStorage(degree, state) {
     state.loading = false
     const currentState = JSON.parse(localStorage.getItem('appState')) || {}
     currentState[degree] = state
-    localStorage.setItem('appState', JSON.stringify(currentState))
+    localStorage.saveData('appState', currentState)
     // console.log('saved', currentState);
 }
 
@@ -58,7 +61,6 @@ function saveStateInLocalStorage(degree, state) {
 
 export function Degree({ setPage, params: { degree } }) {
     const stateFromLocalStorage = getStateFromLocalStorage(degree)
-    console.log({ stateFromLocalStorage });
     const [state, _setState] = React.useState(stateFromLocalStorage || {
         view: 'degree',
         currentCourseIndex: null,

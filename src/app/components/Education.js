@@ -8,15 +8,17 @@ import { WithCollapse } from "./WithCollapse";
 import { Degree } from "./Degree";
 import { calculateOverrideValues } from "next/dist/server/font-utils";
 import { Delete } from "@mui/icons-material";
+import { localStorageAPI } from "../localStorageAPI";
+const localStorage = localStorageAPI()
 function getStateFromLocalStorage() {
-    return JSON.parse(localStorage.getItem('appState')) || {}
+    return localStorage.getData('appState')
 }
 function calculateCourseCompleted(degree) {
     const { courses } = degree
     return `${courses.filter(c => c.completed).length}/${courses.length}`
 }
 export function Education({ setPage }) {
-    const activeDegrees = getStateFromLocalStorage()
+    const activeDegrees = getStateFromLocalStorage() || []
     console.log({ activeDegrees });
 
 
@@ -47,7 +49,7 @@ export function Education({ setPage }) {
                                         if (!shouldDelete) return
                                         const newState = { ...activeDegrees }
                                         delete newState[name]
-                                        localStorage.setItem('appState', JSON.stringify(newState))
+                                        localStorage.saveData('appState', newState)
                                         window.location.reload()
                                     }}
                                     edge="end" aria-label="delete">

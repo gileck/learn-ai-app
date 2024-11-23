@@ -75,9 +75,11 @@ export function Settings({ setRoutes }) {
                 localStorageAPI().cleanData('learn-ai-deletedSubjects');
                 localStorageAPI().cleanData('history');
                 localStorageAPI().cleanData('fetchCache');
+                localStorageAPI().cleanData('appState');
 
 
                 setState({});
+                console.log('Cache cleared');
             }}
         >
             Clear Cache
