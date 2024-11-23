@@ -41,7 +41,7 @@ function DegreeView({ setCourse, courses }) {
 
 function getStateFromLocalStorage(degree) {
 
-    const currentState = localStorage.getData('appState')
+    const currentState = localStorage.getData('appState') || {}
     if (!currentState[degree]) {
         return null
     } else {
@@ -51,7 +51,7 @@ function getStateFromLocalStorage(degree) {
 
 function saveStateInLocalStorage(degree, state) {
     state.loading = false
-    const currentState = JSON.parse(localStorage.getItem('appState')) || {}
+    const currentState = localStorage.getData('appState') || {}
     currentState[degree] = state
     localStorage.saveData('appState', currentState)
     // console.log('saved', currentState);
@@ -86,6 +86,9 @@ export function Degree({ setPage, params: { degree } }) {
     }
 
     function preloadNextItem(view) {
+        if (!state.courses) {
+            return
+        }
         if (view === 'degree') {
             const { courses } = state
             const nextCourseIndexWithoutData = courses.findIndex(c => !c.completed)
