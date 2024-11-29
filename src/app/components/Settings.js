@@ -104,17 +104,36 @@ export function Settings({ setRoutes }) {
                 startIcon={<ContentPaste />}
                 onClick={() => {
                     navigator.clipboard.readText().then(text => {
-                        console.log({ text });
-                        const obj = JSON.parse(text);
-                        const currentCacheObject = localStorageAPI().getData('fetchCache') || {};
-                        const newCacheObject = { ...currentCacheObject, ...obj };
-                        console.log({ newCacheObject });
-                        localStorageAPI().saveData('fetchCache', newCacheObject);
+                        try {
+                            console.log({ text });
+                            const obj = JSON.parse(text);
+                            const currentCacheObject = localStorageAPI().getData('fetchCache') || {};
+                            const newCacheObject = { ...currentCacheObject, ...obj };
+                            console.log({ newCacheObject });
+                            localStorageAPI().saveData('fetchCache', newCacheObject);
+                            alert('Cache uploaded');
+                        }
+                        catch (e) {
+                            console.error('Error uploading cache', e.message);
+                        }
                     });
                 }}
             >
                 Upload Cache
             </Button>
+
+            <Button
+                variant='contained'
+                startIcon={<ContentPaste />}
+                onClick={() => {
+                    const fetchCache = localStorageAPI().getData('fetchCache');
+                    // console.log({ fetchCache });
+                    document.getElementById('cache_print').innerText = JSON.stringify(fetchCache);
+                }}
+            >
+                Print Cache
+            </Button>
+            <div id="cache_print"></div>
 
             <Button
                 variant='contained'
