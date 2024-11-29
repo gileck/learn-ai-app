@@ -62,7 +62,7 @@ function TopicList({ items, title, onCourseClicked }) {
         <Box>
             <Box sx={{}}>
                 <List sx={{
-                    width: '500px',
+                    width: '100%',
                 }}>
                     {(items || []).map((subject, index) => (
                         <ListItem
@@ -76,7 +76,7 @@ function TopicList({ items, title, onCourseClicked }) {
                                 paddingLeft: 2,
                                 mb: 1,
                                 borderRadius: 1,
-                                width: '500px',
+                                width: '100%',
                             }}>
 
 

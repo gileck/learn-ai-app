@@ -64,7 +64,7 @@ function ProcessList({ processArray, title, onClick }) {
             <Box sx={{}}>
                 <h1>{title}</h1>
                 <List sx={{
-                    width: '500px',
+                    width: '100%',
                 }}>
                     {(processArray || []).map((subject, index) => (
                         <ListItem
@@ -78,7 +78,7 @@ function ProcessList({ processArray, title, onClick }) {
                                 paddingLeft: 2,
                                 mb: 1,
                                 borderRadius: 1,
-                                width: '500px',
+                                width: '100%',
                             }}>
 
 

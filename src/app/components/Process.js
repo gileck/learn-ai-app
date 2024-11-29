@@ -57,7 +57,7 @@ function ProcessList({ processArray }) {
         <Box>
             <Box sx={{}}>
                 <List sx={{
-                    width: '500px',
+                    width: '100%',
                 }}>
                     {(processArray || []).map((subject, index) => (
                         <ListItem
@@ -69,7 +69,7 @@ function ProcessList({ processArray }) {
                                 p: 0,
                                 mb: 1,
                                 borderRadius: 1,
-                                width: '500px',
+                                width: '100%',
                             }}>
 
                             <WithCollapse

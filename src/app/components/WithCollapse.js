@@ -18,7 +18,7 @@ export function WithCollapse({ description, mainSubject, children, type, mainCol
         <Box
             sx={{
                 borderRadius: 1,
-                width: '500px',
+                width: '100%',
             }}
         >
             <Box
