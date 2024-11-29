@@ -75,6 +75,7 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
     }, [state])
 
     function getData(type, params) {
+
         return fetchWithCache('/api/' + type, {
             method: 'POST',
             headers: {
@@ -358,7 +359,7 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
     const { courses, view, loading } = state
 
     useEffect(() => {
-        async function getData() {
+        async function getDegreeData() {
             if (state.courses) {
                 return
             }
@@ -370,7 +371,7 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
                 loading: false
             })
         }
-        getData()
+        getDegreeData()
 
     }, [degree])
 

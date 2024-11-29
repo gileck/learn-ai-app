@@ -1,5 +1,5 @@
 'use client'
-import { AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
+import { Alert, AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 
 import { localStorageAPI } from './localStorageAPI';
@@ -22,6 +22,7 @@ import { Topic } from './components/Topic';
 import { SubTopic } from './components/subTopic';
 import { AppContext } from './AppContext';
 import { Degree } from './components/Degree';
+import { Check } from '@mui/icons-material';
 
 
 const staticSubjects = [
@@ -42,6 +43,13 @@ export default function Home() {
   const [route, setRouteInternal] = React.useState(routeFromUrl || []);
   const [page, setPageInternal] = React.useState(getPageFromUrl() || 'randomSubjects');
   const [dataFetched, setDataFetched] = React.useState(localStorageAPI().getData('dataFetched') || []);
+  const [alert, setAlert] = React.useState(null);
+  function openAlert(message) {
+    setAlert(message)
+    setTimeout(() => {
+      setAlert(null)
+    }, 10000)
+  }
 
   useEffect(() => {
     window.addEventListener('popstate', (event) => {
@@ -74,7 +82,13 @@ export default function Home() {
       setDataFetched(newData)
     }
     if (apiPrice > 0.01) {
-      window.alert(`This query costed you ${apiPrice} credits (HIGH)`)
+      openAlert(`This query costed you ${apiPrice} credits (HIGH)`)
+    }
+
+    const dailyCost = dataFetched.filter(item => new Date() - new Date(item.date) < 24 * 60 * 60 * 1000)
+      .reduce((acc, item) => acc + item.apiPrice, 0)
+    if (dailyCost > 0.1) {
+      openAlert(`You have spent ${dailyCost.toFixed(2)} NIS today`)
     }
   }
 
@@ -160,6 +174,20 @@ export default function Home() {
         <Box sx={{}}>
           <Comp {...params} />
         </Box>
+
+        {alert && <Box
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            right: 0,
+            margin: 2,
+            zIndex: 999
+          }}
+        >
+          <Alert icon={<Check fontSize="inherit" />} severity="warning">
+            {alert}
+          </Alert>
+        </Box>}
       </AppContext>
     </>
   );

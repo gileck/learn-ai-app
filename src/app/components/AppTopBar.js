@@ -6,6 +6,7 @@ import { localStorageAPI } from '../localStorageAPI';
 function TotalDailyPrice({ dataFetched }) {
 
 
+
     const requestsToday = dataFetched
         .filter(item => item.apiPrice)
         .filter(item => new Date() - new Date(item.date) < 24 * 60 * 60 * 1000)

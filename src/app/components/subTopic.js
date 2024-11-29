@@ -24,36 +24,6 @@ export function SubTopic({
     resetData
 }) {
     const subTopicData = courses[currentCourseIndex].topics[correntTopicIndex].subTopics[currentSubTopicIndex].data
-    const course = courses[currentCourseIndex].title
-    const topic = courses[currentCourseIndex].topics[correntTopicIndex].title
-    const subTopic = courses[currentCourseIndex].topics[correntTopicIndex].subTopics[currentSubTopicIndex].title
-
-
-    // const [data, setData] = React.useState(null);
-
-    // const { data, loading } = useFetch('/api/subTopic', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //         degree,
-    //         course,
-    //         topic,
-    //         subTopic
-    //     }),
-    //     disableFetchInBackground: true,
-    //     // shouldUseCache: false
-    // })
-
-    // const subTopicData = data?.result
-
-    console.log({ subTopicData });
-
-
-    // useEffect(() => {
-    //     setLoading(loading)
-    // }, [loading])
 
     return (
         <Box >
@@ -72,7 +42,7 @@ export function SubTopic({
 function TopicQuestionsList({ data, course, degree, topic, subTopic }) {
 
     async function onQuestionClicked(question, setAnswer) {
-        console.log(question);
+        // console.log(question);
         const response = await fetchWithCache('/api/topicQuestion', {
             method: 'POST',
             headers: {
@@ -139,7 +109,7 @@ function MainConceptsList({ data, course, degree, topic, subTopic, }) {
 }
 
 function SubTopicData({ data, course, degree, topic, subTopic, markSuptopicAsCompleted, goToPreviousSubTopic, currentSubTopicIndex, subTopics, resetData }) {
-    console.log({ data });
+    // console.log({ data });
     return (
         <>
 
