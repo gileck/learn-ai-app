@@ -3,7 +3,7 @@ import { Box, List, ListItem, ListItemText, IconButton, Typography, FormControl,
 import Clear from '@mui/icons-material/Clear'; // Import Clear icon
 import { localStorageAPI } from '../localStorageAPI'; // Import localStorageAPI
 import { colors } from './utils'; // Import colors
-import { ContentPaste, CopyAll, Delete } from '@mui/icons-material';
+import { ContentPaste, CopyAll, Delete, Print } from '@mui/icons-material';
 
 
 
@@ -85,7 +85,6 @@ export function Settings({ setRoutes }) {
             }}
         >
 
-            // select cache key
             <Select
                 onChange={e => {
                     const key = e.target.value;
@@ -147,16 +146,21 @@ export function Settings({ setRoutes }) {
 
             <Button
                 variant='contained'
-                startIcon={<ContentPaste />}
+                startIcon={<Print />}
                 onClick={() => {
                     const data = localStorageAPI().getData(selectedCacheKey);
                     // console.log({ fetchCache });
-                    document.getElementById('cache_print').innerText = JSON.stringify(data);
+
+                    if (document.getElementById('cache_print').innerText.length > 0) {
+                        document.getElementById('cache_print').innerText = '';
+                    } else {
+                        document.getElementById('cache_print').innerText = JSON.stringify(data);
+                    }
+
                 }}
             >
                 Print Cache
             </Button>
-            <div id="cache_print"></div>
 
             <Button
                 variant='contained'
@@ -179,7 +183,11 @@ export function Settings({ setRoutes }) {
 
 
         </Box>
+        <div id="cache_print"></div>
+
 
     </Box >
+
+
 
 }
