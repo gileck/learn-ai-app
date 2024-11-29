@@ -109,6 +109,10 @@ export function Settings({ setRoutes }) {
                 variant='contained'
                 startIcon={<CopyAll />}
                 onClick={() => {
+                    if (!selectedCacheKey) {
+                        alert('Please select a cache key');
+                        return;
+                    }
                     // localStorageAPI().cleanData('learn-ai-config');
                     // localStorageAPI().cleanData('learn-ai-deletedSubjects');
                     // localStorageAPI().cleanData('history');
@@ -125,6 +129,10 @@ export function Settings({ setRoutes }) {
                 variant='contained'
                 startIcon={<ContentPaste />}
                 onClick={() => {
+                    if (!selectedCacheKey) {
+                        alert('Please select a cache key');
+                        return;
+                    }
                     navigator.clipboard.readText().then(text => {
                         try {
                             console.log({ text });
@@ -149,6 +157,10 @@ export function Settings({ setRoutes }) {
                 variant='contained'
                 startIcon={<Print />}
                 onClick={() => {
+                    if (!selectedCacheKey) {
+                        alert('Please select a cache key');
+                        return;
+                    }
                     const data = localStorageAPI().getData(selectedCacheKey);
                     // console.log({ fetchCache });
 
@@ -168,6 +180,10 @@ export function Settings({ setRoutes }) {
                 color='error'
                 startIcon={<Delete />}
                 onClick={() => {
+                    if (!selectedCacheKey) {
+                        alert('Please select a cache key');
+                        return;
+                    }
                     // localStorageAPI().cleanData('learn-ai-config');
                     // localStorageAPI().cleanData('learn-ai-deletedSubjects');
                     // localStorageAPI().cleanData('history');
