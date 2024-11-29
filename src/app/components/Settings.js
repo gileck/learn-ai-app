@@ -3,7 +3,7 @@ import { Box, List, ListItem, ListItemText, IconButton, Typography, FormControl,
 import Clear from '@mui/icons-material/Clear'; // Import Clear icon
 import { localStorageAPI } from '../localStorageAPI'; // Import localStorageAPI
 import { colors } from './utils'; // Import colors
-import { Delete } from '@mui/icons-material';
+import { ContentPaste, CopyAll, Delete } from '@mui/icons-material';
 
 
 
@@ -65,25 +65,79 @@ export function Settings({ setRoutes }) {
                     <MenuItem value="Paragraph">Paragraph</MenuItem>
                 </Select>
             </FormControl> */}
+
+
         </FormGroup>
-        <Button
-            variant='contained'
-            color='error'
-            startIcon={<Delete />}
-            onClick={() => {
-                localStorageAPI().cleanData('learn-ai-config');
-                localStorageAPI().cleanData('learn-ai-deletedSubjects');
-                localStorageAPI().cleanData('history');
-                localStorageAPI().cleanData('fetchCache');
-                localStorageAPI().cleanData('appState');
+
+        <Box
+            sx={{
+                mt: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+                paddingLeft: '10px',
+                paddingRight: '10px',
 
 
-                setState({});
-                console.log('Cache cleared');
+
+
             }}
         >
-            Clear Cache
-        </Button>
+            <Button
+                variant='contained'
+                startIcon={<CopyAll />}
+                onClick={() => {
+                    // localStorageAPI().cleanData('learn-ai-config');
+                    // localStorageAPI().cleanData('learn-ai-deletedSubjects');
+                    // localStorageAPI().cleanData('history');
+                    const fetchCache = localStorageAPI().getData('fetchCache');
+                    console.log({ fetchCache });
+                    // copy
+                    navigator.clipboard.writeText(JSON.stringify(fetchCache));
+                }}
+            >
+                Copy Cache
+            </Button>
+            {/* //upload cache */}
+            <Button
+                variant='contained'
+                startIcon={<ContentPaste />}
+                onClick={() => {
+                    navigator.clipboard.readText().then(text => {
+                        console.log({ text });
+                        const obj = JSON.parse(text);
+                        const currentCacheObject = localStorageAPI().getData('fetchCache') || {};
+                        const newCacheObject = { ...currentCacheObject, ...obj };
+                        console.log({ newCacheObject });
+                        localStorageAPI().saveData('fetchCache', newCacheObject);
+                    });
+                }}
+            >
+                Upload Cache
+            </Button>
+
+            <Button
+                variant='contained'
+                color='error'
+                startIcon={<Delete />}
+                onClick={() => {
+                    localStorageAPI().cleanData('learn-ai-config');
+                    localStorageAPI().cleanData('learn-ai-deletedSubjects');
+                    localStorageAPI().cleanData('history');
+                    localStorageAPI().cleanData('fetchCache');
+                    localStorageAPI().cleanData('appState');
+
+
+                    setState({});
+                    console.log('Cache cleared');
+                }}
+            >
+                Clear Cache
+            </Button>
+
+
+        </Box>
+
     </Box >
 
 }
