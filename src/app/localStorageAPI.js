@@ -12,6 +12,9 @@ export function localStorageAPI() {
     const getConfigObject = () => JSON.parse(localStorage.getItem('config') || "{}");
 
     return {
+        getKeys: () => {
+            return Object.keys(localStorage);
+        },
         getConfig: (key) => {
             const config = getConfigObject()
             return config[key];

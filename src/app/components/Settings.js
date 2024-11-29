@@ -10,6 +10,7 @@ import { ContentPaste, CopyAll, Delete } from '@mui/icons-material';
 export function Settings({ setRoutes }) {
     const config = localStorageAPI().getData('learn-ai-config') || {}
     const [state, setState] = React.useState(config);
+    const [selectedCacheKey, setSelectedCacheKey] = React.useState(null);
     const { language, 'response-length': responseLength } = state;
 
 
@@ -83,6 +84,28 @@ export function Settings({ setRoutes }) {
 
             }}
         >
+
+            // select cache key
+            <Select
+                onChange={e => {
+                    const key = e.target.value;
+                    console.log({ key });
+                    setSelectedCacheKey(key);
+                }}
+            >
+                {
+                    localStorageAPI().getKeys().map((key, index) => {
+                        return <MenuItem
+                            value={key}
+                            selected={key === selectedCacheKey}
+                        >
+                            {key}
+                        </MenuItem>
+                    })
+                }
+            </Select>
+
+
             <Button
                 variant='contained'
                 startIcon={<CopyAll />}
@@ -90,10 +113,10 @@ export function Settings({ setRoutes }) {
                     // localStorageAPI().cleanData('learn-ai-config');
                     // localStorageAPI().cleanData('learn-ai-deletedSubjects');
                     // localStorageAPI().cleanData('history');
-                    const fetchCache = localStorageAPI().getData('fetchCache');
-                    console.log({ fetchCache });
+                    const data = localStorageAPI().getData(selectedCacheKey);
+                    console.log({ data });
                     // copy
-                    navigator.clipboard.writeText(JSON.stringify(fetchCache));
+                    navigator.clipboard.writeText(JSON.stringify(data));
                 }}
             >
                 Copy Cache
@@ -107,7 +130,7 @@ export function Settings({ setRoutes }) {
                         try {
                             console.log({ text });
                             const obj = JSON.parse(text);
-                            const currentCacheObject = localStorageAPI().getData('fetchCache') || {};
+                            const currentCacheObject = localStorageAPI().getData(selectedCacheKey) || {};
                             const newCacheObject = { ...currentCacheObject, ...obj };
                             console.log({ newCacheObject });
                             localStorageAPI().saveData('fetchCache', newCacheObject);
@@ -126,9 +149,9 @@ export function Settings({ setRoutes }) {
                 variant='contained'
                 startIcon={<ContentPaste />}
                 onClick={() => {
-                    const fetchCache = localStorageAPI().getData('fetchCache');
+                    const data = localStorageAPI().getData(selectedCacheKey);
                     // console.log({ fetchCache });
-                    document.getElementById('cache_print').innerText = JSON.stringify(fetchCache);
+                    document.getElementById('cache_print').innerText = JSON.stringify(data);
                 }}
             >
                 Print Cache
