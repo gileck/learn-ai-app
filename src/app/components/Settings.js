@@ -132,7 +132,7 @@ export function Settings({ setRoutes }) {
                             const currentCacheObject = localStorageAPI().getData(selectedCacheKey) || {};
                             const newCacheObject = { ...obj, ...currentCacheObject };
                             console.log({ newCacheObject });
-                            localStorageAPI().saveData('fetchCache', newCacheObject);
+                            localStorageAPI().saveData(selectedCacheKey, newCacheObject);
                             alert('Cache uploaded');
                         }
                         catch (e) {
