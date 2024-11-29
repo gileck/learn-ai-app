@@ -173,7 +173,7 @@ export function Settings({ setRoutes }) {
                     // localStorageAPI().cleanData('history');
                     // localStorageAPI().cleanData('fetchCache');
                     // localStorageAPI().cleanData('appState');
-                    localStorageAPI().cleanData(selectedCacheKey);
+                    localStorageAPI().saveData(selectedCacheKey, {});
 
 
                     setState({});
