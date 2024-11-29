@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Box, Divider, IconButton, LinearProgress, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { TextInputWithSend } from "./TextInputWithSend";
-import { deleteCache, fetchWithCache, useFetch } from "../useFetch";
+import { deleteCache, fetchWithCache } from "../useFetch";
 import { SubjectList } from "./SubjectList";
 import { getColor } from "./utils";
 import { WithCollapse } from "./WithCollapse";
@@ -33,7 +33,7 @@ function getTitle(state) {
     }
 }
 
-function DegreeView({ setCourse, courses }) {
+function DegreeView({ setCourse, courses, }) {
     return <Box>
         {courses && <ProcessList processArray={courses} onCourseClicked={(course, courseIndex) => setCourse({ course, courseIndex })} />}
     </Box>
@@ -59,7 +59,7 @@ function saveStateInLocalStorage(degree, state) {
 
 
 
-export function Degree({ setPage, params: { degree } }) {
+export function Degree({ setPage, params: { degree }, onDataFetched }) {
     const stateFromLocalStorage = getStateFromLocalStorage(degree)
     const [state, _setState] = React.useState(stateFromLocalStorage || {
         view: 'degree',
@@ -82,6 +82,7 @@ export function Degree({ setPage, params: { degree } }) {
             },
             body: JSON.stringify(params),
             disableFetchInBackground: true,
+            onSuccess: onDataFetched
         })
     }
 
@@ -99,13 +100,7 @@ export function Degree({ setPage, params: { degree } }) {
             // console.log({ course });
             if (!course.topics) {
                 // setCourseTopics({ course: course.title, courseIndex: nextCourseIndexWithoutData })
-                getData('course', { degree, course: course.title }).then(data => {
-                    const topics = data?.result?.topics
-                    setTopicsState({
-                        courseIndex: nextCourseIndexWithoutData,
-                        topics,
-                    })
-                })
+                getData('course', { degree, course: course.title })
             }
         }
         if (view === 'course') {
@@ -119,14 +114,7 @@ export function Degree({ setPage, params: { degree } }) {
             // console.log({ topic });
             if (!topic.subTopics) {
                 // setTopic({ topic: topic.title, topicIndex: nextTopicIndexWithoutData, courseIndex: state.currentCourseIndex })
-                getData('topic', { degree, course: courses[state.currentCourseIndex].title, topic: topic.title }).then(data => {
-                    const subTopics = data?.result?.subTopics
-                    setSubTopicsState({
-                        subTopics,
-                        topicIndex: nextTopicIndexWithoutData,
-                        courseIndex: state.currentCourseIndex
-                    })
-                })
+                getData('topic', { degree, course: courses[state.currentCourseIndex].title, topic: topic.title })
             }
         }
         if (view === 'topic') {
@@ -145,14 +133,6 @@ export function Degree({ setPage, params: { degree } }) {
                     course: courses[state.currentCourseIndex].title,
                     topic: courses[state.currentCourseIndex].topics[state.correntTopicIndex].title,
                     subTopic: subTopic.title
-                }).then(data => {
-                    setSubTopicDataState({
-                        courses,
-                        subTopic: data?.result,
-                        topicIndex: state.correntTopicIndex,
-                        courseIndex: state.currentCourseIndex,
-                        subTopicIndex: nextSubTopicIndexWithoutData
-                    })
                 })
             }
         }
@@ -383,17 +363,7 @@ export function Degree({ setPage, params: { degree } }) {
                 return
             }
             setLoading(true)
-            const data = await fetchWithCache('/api/degree', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    degree,
-                }),
-                disableFetchInBackground: true,
-                // shouldUseCache: false
-            })
+            const data = await getData('degree', { degree })
             const courses = data?.result?.courses
             setState({
                 courses,
@@ -407,17 +377,8 @@ export function Degree({ setPage, params: { degree } }) {
 
     async function setCourseTopics({ course, courseIndex }) {
         setLoading(true)
-        const data = await fetchWithCache('/api/course', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                degree,
-                course
-            }),
-            disableFetchInBackground: true,
-            // shouldUseCache: false
+        const data = await getData('course', {
+            degree, course
         })
         const topics = data?.result?.topics
         setTopicsState({
@@ -432,12 +393,11 @@ export function Degree({ setPage, params: { degree } }) {
                 view: 'course',
             })
         } else {
-            setCourseTopics({ course, courseIndex })
+            await setCourseTopics({ course, courseIndex })
             setState({
                 view: 'course',
             })
         }
-
     }
 
     async function setTopic({ topic, topicIndex, courseIndex }) {
@@ -448,18 +408,10 @@ export function Degree({ setPage, params: { degree } }) {
             })
         } else {
             setLoading(true)
-            const data = await fetchWithCache('/api/topic', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    degree,
-                    course: courses[state.currentCourseIndex].title,
-                    topic
-                }),
-                disableFetchInBackground: true,
-                // shouldUseCache: false
+            const data = await getData('topic', {
+                degree,
+                course: courses[state.currentCourseIndex].title,
+                topic
             })
             const subTopics = data?.result?.subTopics
             setSubTopicsState({
@@ -483,19 +435,11 @@ export function Degree({ setPage, params: { degree } }) {
 
         } else {
             setLoading(true)
-            const data = await fetchWithCache('/api/subTopic', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    degree,
-                    course: courses[state.currentCourseIndex].title,
-                    topic,
-                    subTopic
-                }),
-                disableFetchInBackground: true,
-                // shouldUseCache: false
+            const data = await getData('subTopic', {
+                degree,
+                course: courses[state.currentCourseIndex].title,
+                topic,
+                subTopic
             })
             setSubTopicDataState({
                 courses,
@@ -511,19 +455,11 @@ export function Degree({ setPage, params: { degree } }) {
         const subTopics = courses[courseIndex].topics[topicIndex].subTopics
         const nextSubtopic = subTopics[subTopicIndex + 1]
         if (nextSubtopic) {
-            fetchWithCache('/api/subTopic', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    degree,
-                    course: courses[state.currentCourseIndex].title,
-                    topic,
-                    subTopic: nextSubtopic.title
-                }),
-                disableFetchInBackground: true,
-                // shouldUseCache: false
+            getData('subTopic', {
+                degree,
+                course: courses[state.currentCourseIndex].title,
+                topic,
+                subTopic: nextSubtopic.title
             })
         }
     }

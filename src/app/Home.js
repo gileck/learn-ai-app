@@ -65,12 +65,16 @@ export default function Home() {
 
   function onDataFetched(data) {
     const apiPrice = data?.apiPrice;
+
     if (apiPrice > 0) {
       // console.log({ apiPrice });
       const dataFetched = localStorageAPI().getData('dataFetched') || [];
       const newData = [...dataFetched, { apiPrice: apiPrice, date: new Date().getTime() }]
       localStorageAPI().saveData('dataFetched', newData);
       setDataFetched(newData)
+    }
+    if (apiPrice > 0.01) {
+      window.alert(`This query costed you ${apiPrice} credits (HIGH)`)
     }
   }
 
