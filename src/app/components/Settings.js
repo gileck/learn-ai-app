@@ -168,11 +168,12 @@ export function Settings({ setRoutes }) {
                 color='error'
                 startIcon={<Delete />}
                 onClick={() => {
-                    localStorageAPI().cleanData('learn-ai-config');
-                    localStorageAPI().cleanData('learn-ai-deletedSubjects');
-                    localStorageAPI().cleanData('history');
-                    localStorageAPI().cleanData('fetchCache');
-                    localStorageAPI().cleanData('appState');
+                    // localStorageAPI().cleanData('learn-ai-config');
+                    // localStorageAPI().cleanData('learn-ai-deletedSubjects');
+                    // localStorageAPI().cleanData('history');
+                    // localStorageAPI().cleanData('fetchCache');
+                    // localStorageAPI().cleanData('appState');
+                    localStorageAPI().cleanData(selectedCacheKey);
 
 
                     setState({});
