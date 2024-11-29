@@ -130,13 +130,14 @@ export function Settings({ setRoutes }) {
                             console.log({ text });
                             const obj = JSON.parse(text);
                             const currentCacheObject = localStorageAPI().getData(selectedCacheKey) || {};
-                            const newCacheObject = { ...currentCacheObject, ...obj };
+                            const newCacheObject = { ...obj, ...currentCacheObject };
                             console.log({ newCacheObject });
                             localStorageAPI().saveData('fetchCache', newCacheObject);
                             alert('Cache uploaded');
                         }
                         catch (e) {
                             console.error('Error uploading cache', e.message);
+                            alert('Error uploading cache');
                         }
                     });
                 }}
