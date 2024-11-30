@@ -160,7 +160,7 @@ export default function Home() {
     searchDegree: SearchDegree,
 
   }
-  const Comp = Comps[page] || RandomSubjectList;
+  const Comp = Comps[page] || Degree;
 
 
   return (
