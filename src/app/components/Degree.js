@@ -669,29 +669,10 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
             {selectedText && <Box
                 sx={{
                     position: 'fixed',
-                    bottom: 0,
+                    bottom: 40,
                     width: '100%',
                 }}
             >
-                <MoreInfoDialog
-                    key={open}
-                    open={isMoreInfoClicked}
-                    text={selectedText}
-                    onClose={() => {
-                        setMoreInfoClicked(false)
-                        setSelectedText(null)
-                    }}
-                    getData={getData}
-                    context={{
-                        degree,
-                        course: getTitle(state).course,
-                        topic: getTitle(state).topic,
-                        subTopic: getTitle(state).subTopic
-                    }}
-                />
-
-
-
                 <Alert
                     action={
                         <>
@@ -718,6 +699,23 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
 
                 </Alert>
             </Box>}
+            <MoreInfoDialog
+                key={open}
+                open={isMoreInfoClicked}
+                text={selectedText}
+                onClose={() => {
+                    setMoreInfoClicked(false)
+                    setSelectedText(null)
+                }}
+                getData={getData}
+                context={{
+                    degree,
+                    course: getTitle(state).course,
+                    topic: getTitle(state).topic,
+                    subTopic: getTitle(state).subTopic
+                }}
+            />
+
 
 
 
