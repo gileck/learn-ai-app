@@ -18,18 +18,35 @@ export function Tabs({ data }) {
                 flexDirection: 'column',
             }}
         >
-            <TabContext value={value}>
-                <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                    }}
+                >
                     {data.map((item, index) => (
-                        <Tab key={item.title} label={item.title} value={index + 1} />
+                        <Tab
+                            onClick={(e) => handleChange(e, index + 1)}
+                            key={item.title}
+                            label={item.title}
+                            selected={value === index + 1}
+                            sx={{
+                                color: value === index + 1 ? 'primary.main' : 'black',
+                                borderBottom: value === index + 1 ? '2px solid' : 'none',
+                            }}
+                        />
                     ))}
-                </TabList>
+                </Box>
                 {data.map((item, index) => (
-                    <TabPanel key={item.title} value={index + 1} sx={{ p: 1 }}>
-                        {item.content}
-                    </TabPanel>
+                    value === index + 1 ?
+                        <Box key={item.title} sx={{ p: 1 }}>
+                            {item.content}
+                        </Box> : null
                 ))}
-            </TabContext>
+            </Box>
         </Box>
     )
 }
+

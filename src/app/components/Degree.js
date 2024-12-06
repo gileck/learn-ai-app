@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
-import { Box, Divider, IconButton, LinearProgress, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Alert, Box, Button, Divider, Fab, IconButton, LinearProgress, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { TextInputWithSend } from "./TextInputWithSend";
-import { deleteCache, fetchWithCache } from "../useFetch";
+import { deleteCache, fetchWithCache, useFetch } from "../useFetch";
 import { SubjectList } from "./SubjectList";
 import { getColor } from "./utils";
 import { WithCollapse } from "./WithCollapse";
 import { Course } from "./Course";
 import { Topic } from "./Topic";
 import { SubTopic } from "./subTopic";
-import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
+import { ArrowBackIosNew, ArrowForwardIos, Close } from "@mui/icons-material";
 import { localStorageAPI } from "../localStorageAPI";
+import { MoreInfoBox, MoreInfoDialog } from "./MoreInfo";
 const localStorage = localStorageAPI()
 
 const Views = {
@@ -69,22 +70,51 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
         correntTopicIndex: null,
         currentSubTopicIndex: null
     })
+
+    const [selectedText, setSelectedText] = React.useState(null)
+    const [isMoreInfoClicked, setMoreInfoClicked] = React.useState(null)
+    function onMoreInfoClicked() {
+        // setSelectedText(null)
+        setMoreInfoClicked(true)
+    }
+
     console.log({ state });
     useEffect(() => {
         saveStateInLocalStorage(degree, state)
+
+        document.addEventListener('selectionchange', () => {
+            const selection = window.getSelection();
+
+            if (selection) {
+                const selectedText = selection.toString(); // Get the selected text
+                if (selectedText) {
+                    // console.log('User selected text:', selectedText);
+                    setSelectedText(selectedText)
+                    // You can trigger your custom event or perform any action here
+                }
+            }
+        });
+
+
     }, [state])
 
-    function getData(type, params) {
+    function getParams(type, params) {
+        return [
+            '/api/' + type,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params),
+                disableFetchInBackground: true,
+                onSuccess: onDataFetched
+            }
+        ]
+    }
 
-        return fetchWithCache('/api/' + type, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(params),
-            disableFetchInBackground: true,
-            onSuccess: onDataFetched
-        })
+    function getData(type, params) {
+        return fetchWithCache(...getParams(type, params))
     }
 
     function preloadNextItem(view) {
@@ -616,6 +646,8 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
         resetData
     }
 
+
+
     return (
         <Box>
 
@@ -634,12 +666,67 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
                 {view === 'subTopic' && <SubTopic {...params} />}
                 {view !== 'subTopic' && Views[view](params)}
             </Box>
+            {selectedText && <Box
+                sx={{
+                    position: 'fixed',
+                    bottom: 0,
+                    width: '100%',
+                }}
+            >
+                <MoreInfoDialog
+                    key={open}
+                    open={isMoreInfoClicked}
+                    text={selectedText}
+                    onClose={() => {
+                        setMoreInfoClicked(false)
+                        setSelectedText(null)
+                    }}
+                    getData={getData}
+                    context={{
+                        degree,
+                        course: getTitle(state).course,
+                        topic: getTitle(state).topic,
+                        subTopic: getTitle(state).subTopic
+                    }}
+                />
+
+
+
+                <Alert
+                    action={
+                        <>
+                            <Button
+                                onClick={onMoreInfoClicked}
+                            >
+                                More Info
+                            </Button>
+                            <IconButton
+                                aria-label="close"
+                                color="inherit"
+                                size="small"
+                                onClick={() => setSelectedText(null)}
+                            >
+                                <Close />
+
+                            </IconButton>
+                        </>
+                    }
+
+                    severity="info">
+
+                    {selectedText}
+
+                </Alert>
+            </Box>}
+
 
 
 
         </Box>
     )
 }
+
+
 
 function ProcessList({ processArray, title, onCourseClicked }) {
     return (
@@ -669,6 +756,7 @@ function ProcessList({ processArray, title, onCourseClicked }) {
                                 // onClick={() => onClick(subject, colors.filter(c => c !== mainColor)[index])}
                                 primary={subject.title}
                                 secondary={subject.description}
+
 
 
                             />

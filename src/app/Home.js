@@ -41,7 +41,7 @@ export default function Home() {
 
   const routeFromUrl = getRouteFromUrl();
   const [route, setRouteInternal] = React.useState(routeFromUrl || []);
-  const [page, setPageInternal] = React.useState(getPageFromUrl() || 'randomSubjects');
+  const [page, setPageInternal] = React.useState(getPageFromUrl() || 'education');
   const [dataFetched, setDataFetched] = React.useState(localStorageAPI().getData('dataFetched') || []);
   const [alert, setAlert] = React.useState(null);
   function openAlert(message) {
