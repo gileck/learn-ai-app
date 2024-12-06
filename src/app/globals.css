@@ -8,6 +8,24 @@ body {
   padding: 0;
 }
 
+body,
+html {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+}
+
+body::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
+}
+
+html,
+body {
+  touch-action: manipulation;
+  overscroll-behavior: none;
+}
 
 /* :root {
   --background: #ffffff;
