@@ -10,7 +10,7 @@ import { Topic } from "./Topic";
 import { SubTopic } from "./subTopic";
 import { ArrowBackIosNew, ArrowForwardIos, Close } from "@mui/icons-material";
 import { localStorageAPI } from "../localStorageAPI";
-import { MoreInfoBox, MoreInfoDialog } from "./MoreInfo";
+import { MoreInfoAlertText, MoreInfoBox, MoreInfoDialog } from "./MoreInfo";
 const localStorage = localStorageAPI()
 
 const Views = {
@@ -72,8 +72,10 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
     })
 
     const [selectedText, setSelectedText] = React.useState(null)
+    const [moreInfoText, setMoreInfoText] = React.useState(null)
     const [isMoreInfoClicked, setMoreInfoClicked] = React.useState(null)
-    function onMoreInfoClicked() {
+    function onMoreInfoClicked(text) {
+        setMoreInfoText(text)
         // setSelectedText(null)
         setMoreInfoClicked(true)
     }
@@ -673,36 +675,17 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
                     width: '100%',
                 }}
             >
-                <Alert
-                    action={
-                        <>
-                            <Button
-                                onClick={onMoreInfoClicked}
-                            >
-                                More Info
-                            </Button>
-                            <IconButton
-                                aria-label="close"
-                                color="inherit"
-                                size="small"
-                                onClick={() => setSelectedText(null)}
-                            >
-                                <Close />
+                <MoreInfoAlertText
+                    selectedText={selectedText}
+                    onMoreInfoClicked={onMoreInfoClicked}
+                    setSelectedText={setSelectedText}
 
-                            </IconButton>
-                        </>
-                    }
-
-                    severity="info">
-
-                    {selectedText}
-
-                </Alert>
+                />
             </Box>}
             <MoreInfoDialog
                 key={open}
                 open={isMoreInfoClicked}
-                text={selectedText}
+                text={moreInfoText}
                 onClose={() => {
                     setMoreInfoClicked(false)
                     setSelectedText(null)
@@ -769,3 +752,4 @@ function ProcessList({ processArray, title, onCourseClicked }) {
         </Box>
     )
 }
+
