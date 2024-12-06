@@ -23,7 +23,7 @@ export function Tabs({ data }) {
                     sx={{
                         display: 'flex',
                         flexDirection: 'row',
-                        justifyContent: 'center',
+                        justifyContent: 'space-evenly',
                     }}
                 >
                     {data.map((item, index) => (

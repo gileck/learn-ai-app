@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, Modal, Typography } from '@mui/material'
+import { TextBox } from './TextBox';
 
 
 function MoreInfoDialogComp({ text, context, getData, open, onClose }) {
@@ -34,7 +35,9 @@ function MoreInfoDialogComp({ text, context, getData, open, onClose }) {
         <DialogTitle>{text}</DialogTitle>
         {loading && <LinearProgress />}
         <DialogContent>
-            <Typography variant='body1'>{info}</Typography>
+            <TextBox
+                text={info}
+            />
 
         </DialogContent>
         <DialogActions>
