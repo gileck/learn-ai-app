@@ -35,6 +35,7 @@ function MoreInfoDialogComp({ text, context, getData, open, onClose: closeDialog
         open={open}
         onClose={onClose}
         fullWidth={true}
+
         sx={{
             height: '95%',
             marginTop: '0px'
