@@ -36,6 +36,22 @@ ol {
 
 }
 
+p {
+  margin: 7px
+}
+
+ol li::marker {
+  content: ''
+}
+
+ol {
+  display: grid;
+}
+
+li {
+  display: grid;
+}
+
 h3 {
   margin: 0;
 }

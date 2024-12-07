@@ -35,6 +35,10 @@ function MoreInfoDialogComp({ text, context, getData, open, onClose: closeDialog
         open={open}
         onClose={onClose}
         fullWidth={true}
+        sx={{
+            height: '650px',
+            marginTop: '0px'
+        }}
 
     >
         {/* <DialogTitle
@@ -151,7 +155,9 @@ export function MoreInfoAlertText({ selectedText, closeMoreInfoBox, onMoreInfoCl
 
 
 
-                {!isEditing && <Box>{text}</Box>}
+                {!isEditing && <Box
+                    onDoubleClick={onEditClicked}
+                >{text}</Box>}
                 {isEditing && <TextField
                     size='small'
                     value={text}
@@ -226,12 +232,12 @@ export function MoreInfoAlertText({ selectedText, closeMoreInfoBox, onMoreInfoCl
                 <Button
                     onClick={() => onSendClicked('why')}
                 >
-                    Why?
+                    Why
                 </Button>
                 <Button
                     onClick={() => onSendClicked("process")}
                 >
-                    What is the process?
+                    process
                 </Button>
 
             </Box>}
