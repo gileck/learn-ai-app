@@ -741,6 +741,13 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
                     subTopic: getTitle(state).subTopic
                 }}
             />
+            <div
+                style={{
+                    height: '100px'
+                }}
+            >
+
+            </div>
         </Box>
     )
 }

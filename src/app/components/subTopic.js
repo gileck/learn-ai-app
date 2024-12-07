@@ -184,10 +184,10 @@ function SubTopicData({ data, course, degree, topic, subTopic, markSuptopicAsCom
                 </Box>
 
             </Box>
-            <Button
+            {/* <Button
                 onClick={() => resetData({ course, degree, topic, subTopic })}
                 variant='outlined'
-            >RESET DATA</Button>
+            >RESET DATA</Button> */}
         </>
 
 
