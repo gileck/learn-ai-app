@@ -120,8 +120,8 @@ export function MoreInfoAlertText({ selectedText, closeMoreInfoBox, onMoreInfoCl
     return <Box
         sx={{
             position: 'fixed',
-            bottom: '10px',
-            left: '10px',
+            bottom: '20px',
+            left: '8px',
             backgroundColor: '#cce0e6',
             width: '92%',
             padding: '10px',
