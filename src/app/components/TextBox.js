@@ -3,6 +3,17 @@ import { TextField, Button, Box, Typography } from '@mui/material';
 import { localStorageAPI } from '../localStorageAPI';
 import ReactMarkdown from 'react-markdown';
 import { Language } from '@mui/icons-material';
+
+const parse = text => {
+    return text
+        .replace(/\\text\{([^}]*)\}/g, '$1') // Remove \text{}
+        .replace(/\\rightarrow/g, '→')      // Replace \rightarrow with →
+        .replace(/[\[\]]/g, '')            // Remove square brackets
+        .replace(/\\/g, '');            // Remove slashes
+}
+
+
+
 function replaceAsterisksWithBold(text) {
     return text.replace(/\*\*(.*?)\*\*/g, '<span class="bold">$1</span>');
 }
@@ -45,13 +56,17 @@ export function TextBox({ text, title, setRoute }) {
             direction: textDirection,
         }}
     >
+        <div id="text-box-id">
+            <Typography>
+                <ReactMarkdown>
+                    {parse(text)}
+                </ReactMarkdown>
+                {/* <BoldText text={text} /> */}
+                {title ? <div>
+                    Read more about <span onClick={() => setRoute(title)} style={{ color: 'blue' }}>{title}</span>
+                </div> : ''}
 
-        <Typography>
-            <BoldText text={text} />
-            {title ? <div>
-                Read more about <span onClick={() => setRoute(title)} style={{ color: 'blue' }}>{title}</span>
-            </div> : ''}
-
-        </Typography>
+            </Typography>
+        </div>
     </Box>
 }

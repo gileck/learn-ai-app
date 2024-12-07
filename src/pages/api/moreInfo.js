@@ -26,11 +26,13 @@ export default async function handler(req, res) {
         I am taking a course on "${course}" as a part of the Undergraduate Major in "${degree}".
         I am currently studying the topic "${topic}" and I am trying to understand the subtopic "${subTopic}".
 
-        I need an explanation of the following text:
+        I have a question or a request for more information on the following:
 
         "${text}"
 
-        Please provide a short explanation of the text in simple terms.
+        
+
+        
     `;
 
     // console.log({ prompt });

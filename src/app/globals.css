@@ -27,6 +27,23 @@ body {
   overscroll-behavior: none;
 }
 
+ul,
+ol {
+  margin: 0;
+  margin-block-end: 0;
+  margin-block-start: 0;
+  padding-inline-start: 5px;
+
+}
+
+h3 {
+  margin: 0;
+}
+
+h4 {
+  margin: 0
+}
+
 /* :root {
   --background: #ffffff;
   --foreground: #171717;

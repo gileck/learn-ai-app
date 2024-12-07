@@ -8,7 +8,7 @@ import { WithCollapse } from "./WithCollapse";
 import { Course } from "./Course";
 import { Topic } from "./Topic";
 import { SubTopic } from "./subTopic";
-import { ArrowBackIosNew, ArrowForwardIos, Close } from "@mui/icons-material";
+import { ArrowBackIosNew, ArrowForwardIos, Close, QuestionAnswer } from "@mui/icons-material";
 import { localStorageAPI } from "../localStorageAPI";
 import { MoreInfoAlertText, MoreInfoBox, MoreInfoDialog } from "./MoreInfo";
 const localStorage = localStorageAPI()
@@ -72,12 +72,32 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
     })
 
     const [selectedText, setSelectedText] = React.useState(null)
-    const [moreInfoText, setMoreInfoText] = React.useState(null)
+    const [moreInfoTextArray, setMoreInfoTextArray] = React.useState([])
     const [isMoreInfoClicked, setMoreInfoClicked] = React.useState(null)
+    const [isQuestionBoxOpen, setQuestionBoxOpen] = React.useState(false)
+    const moreInfoText = moreInfoTextArray[0]
+    function closeMoreInfoTextDialog() {
+        setMoreInfoClicked(false)
+        setMoreInfoTextArray([])
+
+    }
+    function popMoreInfoTextArray(text) {
+        if (moreInfoTextArray.length === 1) {
+            setMoreInfoClicked(false)
+            setMoreInfoTextArray([])
+            return
+        }
+        setMoreInfoTextArray(moreInfoTextArray.slice(1))
+    }
     function onMoreInfoClicked(text) {
-        setMoreInfoText(text)
+        setMoreInfoTextArray([
+            text,
+            ...moreInfoTextArray
+        ])
+        // setMoreInfoText(text)
         // setSelectedText(null)
         setMoreInfoClicked(true)
+        setQuestionBoxOpen(false)
     }
 
     console.log({ state });
@@ -88,12 +108,31 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
             const selection = window.getSelection();
 
             if (selection) {
-                const selectedText = selection.toString(); // Get the selected text
-                if (selectedText) {
-                    // console.log('User selected text:', selectedText);
-                    setSelectedText(selectedText)
-                    // You can trigger your custom event or perform any action here
+                const node = selection.anchorNode;
+                const isDescendantOfTextBox = (child) => {
+                    let node = child;
+                    while (node !== null) {
+                        if (node.id === 'text-box-id') {
+                            return true;
+                        }
+                        node = node.parentNode;
+                    }
+                    return false;
                 }
+                if (node && isDescendantOfTextBox(node)) {
+                    // console.log('User selected text:', selectedText);
+                    const selectedText = selection.toString(); // Get the selected text
+                    if (selectedText) {
+                        // console.log('User selected text:', selectedText);
+                        setSelectedText(selectedText)
+                        setQuestionBoxOpen(true)
+
+                        // You can trigger your custom event or perform any action here
+                    }
+                }
+
+            } else {
+                setSelectedText(null)
             }
         });
 
@@ -653,6 +692,19 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
     return (
         <Box>
 
+            {!isQuestionBoxOpen && <Fab
+                sx={{
+                    position: 'fixed',
+                    bottom: 10,
+                    right: 10,
+                    zIndex: 100000,
+                }}
+                onClick={() => setQuestionBoxOpen(true)}
+            >
+                <QuestionAnswer />
+
+            </Fab>}
+
             {loading && <LinearProgress />}
             <Box
                 sx={{
@@ -668,28 +720,19 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
                 {view === 'subTopic' && <SubTopic {...params} />}
                 {view !== 'subTopic' && Views[view](params)}
             </Box>
-            {selectedText && <Box
-                sx={{
-                    position: 'fixed',
-                    bottom: 40,
-                    width: '100%',
-                }}
-            >
-                <MoreInfoAlertText
-                    selectedText={selectedText}
-                    onMoreInfoClicked={onMoreInfoClicked}
-                    setSelectedText={setSelectedText}
+            {isQuestionBoxOpen && <MoreInfoAlertText
+                selectedText={selectedText}
+                onMoreInfoClicked={onMoreInfoClicked}
+                closeMoreInfoBox={() => setQuestionBoxOpen(false)}
 
-                />
-            </Box>}
+            />}
+
             <MoreInfoDialog
-                key={open}
+                key={`${open}-${moreInfoText}`}
                 open={isMoreInfoClicked}
                 text={moreInfoText}
-                onClose={() => {
-                    setMoreInfoClicked(false)
-                    setSelectedText(null)
-                }}
+                onBackClicked={() => popMoreInfoTextArray()}
+                onClose={() => closeMoreInfoTextDialog()}
                 getData={getData}
                 context={{
                     degree,
@@ -698,11 +741,6 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
                     subTopic: getTitle(state).subTopic
                 }}
             />
-
-
-
-
-
         </Box>
     )
 }
