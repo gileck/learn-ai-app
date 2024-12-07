@@ -19,7 +19,6 @@ function calculateCourseCompleted(degree) {
 }
 export function Education({ setPage }) {
     const activeDegrees = getStateFromLocalStorage() || []
-    console.log({ activeDegrees });
 
 
     return (
@@ -28,7 +27,10 @@ export function Education({ setPage }) {
                 {
                     Object.entries(activeDegrees).map(([name, value], index) => {
                         return <ListItem
-                            onClick={() => setPage('degree', { degree: name })}
+                            onClick={() => {
+                                localStorage.saveData('currentDegree', { name })
+                                setPage('degree', { degree: name })
+                            }}
                             sx={{
                                 bgcolor: getColor({ index }),
                                 p: 1,

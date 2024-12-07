@@ -43,6 +43,7 @@ function DegreeView({ setCourse, courses, }) {
 function getStateFromLocalStorage(degree) {
 
     const currentState = localStorage.getData('appState') || {}
+    console.log({ currentState });
     if (!currentState[degree]) {
         return null
     } else {

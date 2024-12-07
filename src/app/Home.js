@@ -1,6 +1,6 @@
 'use client'
 import { Alert, AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { act, useEffect } from 'react';
 
 import { localStorageAPI } from './localStorageAPI';
 // Add the following imports
@@ -41,6 +41,9 @@ export default function Home() {
 
   const routeFromUrl = getRouteFromUrl();
   const [route, setRouteInternal] = React.useState(routeFromUrl || []);
+
+
+
   const [page, setPageInternal] = React.useState(getPageFromUrl() || 'education');
   const [dataFetched, setDataFetched] = React.useState(localStorageAPI().getData('dataFetched') || []);
   const [alert, setAlert] = React.useState(null);
@@ -50,6 +53,18 @@ export default function Home() {
       setAlert(null)
     }, 10000)
   }
+
+  useEffect(() => {
+    const currentDegree = localStorageAPI().getData('currentDegree') || null;
+    console.log({ currentDegree });
+    const isDegreeInLocalStorage = (degree) => {
+      const activeDegrees = localStorageAPI().getData('appState') || {}
+      return activeDegrees[degree]
+    }
+    if (currentDegree && currentDegree.name && isDegreeInLocalStorage(currentDegree.name)) {
+      setPage('degree', { degree: currentDegree.name })
+    }
+  }, [])
 
   useEffect(() => {
     window.addEventListener('popstate', (event) => {
