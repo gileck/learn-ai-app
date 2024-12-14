@@ -4,13 +4,10 @@ import { TextBox } from './TextBox';
 import { ArrowCircleDown, ArrowDownward, ArrowDownwardSharp, ArrowDropDown, ArrowDropDownSharp, ArrowDropUp, Check, Close, Edit, Save, Send } from '@mui/icons-material';
 import { WithCollapse } from './WithCollapse';
 import { getColor } from './utils';
-import { ProcessBox } from './Process';
+import { Process } from './Process';
 
 
-const CompByType = {
-    process: ProcessBox
-}
-const getCompByType = (type) => CompByType[type] || TextBox
+
 
 
 function MoreInfoDialogComp({ input, context, getData, open, onClose: closeDialog, onBackClicked }) {
@@ -40,7 +37,7 @@ function MoreInfoDialogComp({ input, context, getData, open, onClose: closeDialo
             }
             setLoading(true)
 
-            const data = await getData(apiByType[type] || 'moreInfo', { text, context, type })
+            const data = await getData(apiByType[type] || 'moreInfo', { text, context })
             console.log({ data });
             setLoading(false)
             setInfo(data?.result)
@@ -66,6 +63,10 @@ function MoreInfoDialogComp({ input, context, getData, open, onClose: closeDialo
         </Box>
     }
 
+    const CompByType = {
+        process: Process
+    }
+    const getCompByType = (type) => CompByType[type] || TextBox
 
     const Comp = getCompByType(type)
     return <Dialog
@@ -94,7 +95,8 @@ function MoreInfoDialogComp({ input, context, getData, open, onClose: closeDialo
                 {text}
             </Box>
             <Divider />
-            {info && <Comp data={info} text={info} />}
+            {type === "process" && <Process context={context} mainProcess={text} />}
+            {type !== "process" && <TextBox text={info} />}
 
         </DialogContent>
         <DialogActions

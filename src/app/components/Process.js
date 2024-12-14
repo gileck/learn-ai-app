@@ -64,7 +64,7 @@ function setProcessInUrl(process) {
     url.searchParams.set('process', process)
     window.history.pushState({}, '', url)
 }
-export function Process({ mainProcess }) {
+export function Process({ mainProcess, context: _context }) {
     console.log({ mainProcess });
     const [inputArray, setInputArray] = React.useState([mainProcess]);
     const [data, setData] = React.useState(null);
@@ -93,7 +93,6 @@ export function Process({ mainProcess }) {
 
 
     async function addMoreInfoToStep({ step, index, type }) {
-        console.log({ step, index, type, inputArray });
         setLoadingStep(index, true)
         const context = inputArray.map(item => item.title || item).join(', ')
         const { result } = await getData({
@@ -110,6 +109,7 @@ export function Process({ mainProcess }) {
             newData.process[index].moreInfo = result
             return newData
         })
+        setLoadingStep(index, false)
     }
 
     useEffect(() => {
@@ -121,8 +121,9 @@ export function Process({ mainProcess }) {
             setLoading(true)
             const step = inputArray[inputArray.length - 1]
             const text = step.title ? `${step.title}: ${step.description}` : step
-            const context = inputArray.slice(0, inputArray.length - 1)
-                .map(item => item.title || item).join(', ')
+            const context = inputArray.length > 1 ?
+                inputArray.slice(0, inputArray.length - 1)
+                    .map(item => item.title || item).join(', ') : _context
 
             const { result } = await getData({
                 params: {
@@ -162,7 +163,7 @@ export function Process({ mainProcess }) {
                 {inputArray.map(item => item.title || item).join(' > ')}
             </Box>
             <Divider />
-            {data && <ProcessBox data={data} onClick={onStepClicked} onMoreInfoClosed={onMoreInfoClosed} />}
+            {data && <ProcessBox data={data} loadingSteps={loadingSteps} onClick={onStepClicked} onMoreInfoClosed={onMoreInfoClosed} />}
         </Box >
     )
 }
@@ -173,7 +174,7 @@ function StepInputOutput({ step }) {
         {input.join(', ')} {"→"} {output.join(', ')}
     </Box>
 }
-export function ProcessBox({ data, onClick, onMoreInfoClosed }) {
+export function ProcessBox({ data, onClick, onMoreInfoClosed, loadingSteps }) {
     const process = data.process
     const [openedSteps, setOpenedSteps] = React.useState({})
 
@@ -203,6 +204,7 @@ export function ProcessBox({ data, onClick, onMoreInfoClosed }) {
                             backgroundColor: getColor({ index }),
                         }}
                     >
+
                         <ListItem
                             onClick={() => onStepClicked(index)}
                             sx={{
@@ -210,6 +212,8 @@ export function ProcessBox({ data, onClick, onMoreInfoClosed }) {
 
                             }}
                         >
+
+
                             <ListItemText
                                 primary={<Box
                                     sx={{
@@ -237,7 +241,10 @@ export function ProcessBox({ data, onClick, onMoreInfoClosed }) {
                                     <ArrowDropDown />
                                 </IconButton>
                             </ListItemSecondaryAction>
+
                         </ListItem>
+                        {loadingSteps[index] && <LinearProgress />}
+
                         <Collapse in={openedSteps[index]}>
                             <Divider />
 
