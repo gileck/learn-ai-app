@@ -1,11 +1,26 @@
 import React, { useEffect } from 'react'
-import { TextField, Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, LinearProgress, Modal, Typography, TextareaAutosize, Divider } from '@mui/material'
+import { TextField, Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, LinearProgress, Modal, Typography, TextareaAutosize, Divider, List, ListItem, ListItemText, Collapse, ListItemSecondaryAction } from '@mui/material'
 import { TextBox } from './TextBox';
 import { ArrowCircleDown, ArrowDownward, ArrowDownwardSharp, ArrowDropDown, ArrowDropDownSharp, ArrowDropUp, Check, Close, Edit, Save, Send } from '@mui/icons-material';
+import { WithCollapse } from './WithCollapse';
+import { getColor } from './utils';
+import { ProcessBox } from './Process';
 
 
+const CompByType = {
+    process: ProcessBox
+}
+const getCompByType = (type) => CompByType[type] || TextBox
 
-function MoreInfoDialogComp({ text, context, getData, open, onClose: closeDialog, onBackClicked }) {
+
+function MoreInfoDialogComp({ input, context, getData, open, onClose: closeDialog, onBackClicked }) {
+
+    if (!input) {
+        return null
+    }
+
+    console.log({ input });
+    const { text, type } = input
 
     const [loading, setLoading] = React.useState(false)
     const [info, setInfo] = React.useState('')
@@ -16,12 +31,17 @@ function MoreInfoDialogComp({ text, context, getData, open, onClose: closeDialog
     }
 
     useEffect(() => {
+        const apiByType = {
+            process: 'process',
+        }
         async function get() {
             if (!text) {
                 return
             }
             setLoading(true)
-            const data = await getData('moreInfo', { text, context })
+
+            const data = await getData(apiByType[type] || 'moreInfo', { text, context, type })
+            console.log({ data });
             setLoading(false)
             setInfo(data?.result)
         }
@@ -31,8 +51,25 @@ function MoreInfoDialogComp({ text, context, getData, open, onClose: closeDialog
 
     }, [text, open])
 
+    if (loading) {
+        return <Box
+            sx={{
+                position: 'fixed',
+                top: '0px',
+                left: '0px',
+                width: '100%',
+            }}
+        >
+            <LinearProgress
+                color='secondary'
+            />
+        </Box>
+    }
+
+
+    const Comp = getCompByType(type)
     return <Dialog
-        open={open}
+        open={open && !loading}
         onClose={onClose}
         fullWidth={true}
 
@@ -48,7 +85,6 @@ function MoreInfoDialogComp({ text, context, getData, open, onClose: closeDialog
             }}
 
         >{text}</DialogTitle> */}
-        {loading && <LinearProgress />}
         <DialogContent>
             <Box
                 sx={{
@@ -58,9 +94,7 @@ function MoreInfoDialogComp({ text, context, getData, open, onClose: closeDialog
                 {text}
             </Box>
             <Divider />
-            <TextBox
-                text={info}
-            />
+            {info && <Comp data={info} text={info} />}
 
         </DialogContent>
         <DialogActions
@@ -87,13 +121,13 @@ function MoreInfoDialogComp({ text, context, getData, open, onClose: closeDialog
     </Dialog>
 }
 export const MoreInfoDialog = React.memo(MoreInfoDialogComp, (prevProps, nextProps) => {
-    return prevProps.open === nextProps.open && prevProps.text === nextProps.text
+    return prevProps.open === nextProps.open && prevProps.input?.text === nextProps.input?.text
 })
 
 const prompts = {
     explain: text => `Can you explain this: ${text}`,
     why: text => `Can you explain why: ${text}`,
-    process: text => `what is the process of: ${text}`,
+    process: text => text,
     what: text => `what is: ${text}`
 }
 
@@ -101,11 +135,18 @@ const prompts = {
 export function MoreInfoAlertText({ selectedText, closeMoreInfoBox, onMoreInfoClicked }) {
     const [isEditing, setIsEditing] = React.useState(false)
     const [text, setText] = React.useState(selectedText)
-    const [showPrompts, setShowPrompts] = React.useState(false)
+    const [showPrompts, setShowPrompts] = React.useState(true)
 
     useEffect(() => {
         setText(selectedText)
     }, [selectedText])
+
+    function onProcessClicked() {
+        onMoreInfoClicked({
+            text,
+            type: 'process'
+        })
+    }
 
     function onEditClicked() {
         setIsEditing(true)
@@ -116,9 +157,15 @@ export function MoreInfoAlertText({ selectedText, closeMoreInfoBox, onMoreInfoCl
 
     function onSendClicked(key) {
         if (prompts[key]) {
-            onMoreInfoClicked(prompts[key](text))
+            onMoreInfoClicked({
+                text,
+                type: key
+            })
         } else {
-            onMoreInfoClicked(text)
+            onMoreInfoClicked({
+                text,
+                type: 'explain'
+            })
         }
     }
 
@@ -127,7 +174,7 @@ export function MoreInfoAlertText({ selectedText, closeMoreInfoBox, onMoreInfoCl
             position: 'fixed',
             bottom: '20px',
             left: '8px',
-            backgroundColor: '#cce0e6',
+            backgroundColor: 'white',
             width: '92%',
             padding: '10px',
             boxShadow: '0 0 5px 0px #000000',
@@ -236,7 +283,7 @@ export function MoreInfoAlertText({ selectedText, closeMoreInfoBox, onMoreInfoCl
                     Why
                 </Button>
                 <Button
-                    onClick={() => onSendClicked("process")}
+                    onClick={() => onProcessClicked()}
                 >
                     process
                 </Button>

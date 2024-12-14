@@ -14,7 +14,7 @@ import { addToHistory, onDataFetched } from './components/utils';
 import { Menu } from './components/Menu';
 import { AppTopBar } from './components/AppTopBar';
 import { Settings } from './components/Settings';
-import { Process } from './components/Process';
+import { Process, ProcessWithInput } from './components/Process';
 import { Education } from './components/Education';
 import { SearchDegree } from './components/SearchDegree';
 import { Course } from './components/Course';
@@ -62,7 +62,7 @@ export default function Home() {
       return activeDegrees[degree]
     }
     if (currentDegree && currentDegree.name && isDegreeInLocalStorage(currentDegree.name)) {
-      setPage('degree', { degree: currentDegree.name })
+      // setPage('degree', { degree: currentDegree.name })
     }
   }, [])
 
@@ -169,7 +169,7 @@ export default function Home() {
     randomSubjects: RandomSubjectList,
     history: History,
     settings: Settings,
-    process: Process,
+    process: ProcessWithInput,
     education: Education,
     degree: Degree,
     searchDegree: SearchDegree,

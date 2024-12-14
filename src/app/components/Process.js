@@ -1,117 +1,316 @@
-import React from "react";
-import { Box, Divider, LinearProgress, List, ListItem, ListItemText } from "@mui/material";
+import React, { useEffect } from 'react'
+import { TextField, Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, LinearProgress, Modal, Typography, TextareaAutosize, Divider, List, ListItem, ListItemText, Collapse, ListItemSecondaryAction } from '@mui/material'
+import { TextBox } from './TextBox';
+import { ArrowBackIosSharp, ArrowCircleDown, ArrowDownward, ArrowDownwardSharp, ArrowDropDown, ArrowDropDownSharp, ArrowDropUp, Check, Close, Edit, Save, Send } from '@mui/icons-material';
+import { WithCollapse } from './WithCollapse';
+import { getColor } from './utils';
+// import { Box, Divider, IconButton, LinearProgress, List, ListItem, ListItemText } from "@mui/material";
 import { TextInputWithSend } from "./TextInputWithSend";
 import { fetchWithCache } from "../useFetch";
-import { SubjectList } from "./SubjectList";
-import { getColor } from "./utils";
-import { WithCollapse } from "./WithCollapse";
+// import { SubjectList } from "./SubjectList";
+// import { getColor } from "./utils";
+// import { WithCollapse } from "./WithCollapse";
 
+async function getData({
+    params,
+    type
+}) {
+    const { result, apiPrice } = await fetchWithCache(`/api/${type}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params),
+        disableFetchInBackground: true,
+        // shouldUsecache: false
 
-export function Process() {
-    const [processArray, setData] = React.useState(null);
-    const [loading, setLoading] = React.useState(false);
+    })
+    return { result, apiPrice }
+}
+
+const promptsByType = {
+    process: 'Enter a process',
+    simple: `Explain this process in simpler words`,
+    why: `Explain why the process happens`,
+    explain: `Explain the process in details`
+}
+
+export function ProcessWithInput() {
+    const processFromUrl = new URLSearchParams(window.location.search).get('process')
+    const [selectedProcess, setSelectedProcess] = React.useState(processFromUrl || 'cellular respiration');
+    console.log({ selectedProcess });
     async function onSubmit(text) {
-        setLoading(true)
-        console.log(text);
-        const { result, apiPrice } = await fetchWithCache('/api/process', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                mainSubject: text
-            }),
-            disableFetchInBackground: true,
-            // shouldUsecache: false
-
-        })
-
-        console.log(result);
-        setData(result.process)
-        setLoading(false)
+        setSelectedProcess(text)
     }
-    console.log({ processArray });
+    return <Box
+        sx={{
+            marginTop: '20px'
+        }}
+    >
+        <TextInputWithSend
+            onSubmit={onSubmit}
+            placeHolder='Enter a process'
+            value={selectedProcess}
+        />
+
+        <Process
+            mainProcess={selectedProcess}
+        />
+    </Box>
+}
+
+function setProcessInUrl(process) {
+    const url = new URL(window.location.href)
+    url.searchParams.set('process', process)
+    window.history.pushState({}, '', url)
+}
+export function Process({ mainProcess }) {
+    console.log({ mainProcess });
+    const [inputArray, setInputArray] = React.useState([mainProcess]);
+    const [data, setData] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
+    const [loadingSteps, setLoadingSteps] = React.useState({});
+
+    useEffect(() => {
+        setInputArray([mainProcess])
+        setProcessInUrl(mainProcess)
+    }, [mainProcess])
+
+    function setLoadingStep(index, value) {
+        setLoadingSteps({
+            ...loadingSteps,
+            [index]: value
+        })
+    }
+
+    function onMoreInfoClosed(index) {
+        setData(oldData => {
+            const newData = { ...oldData }
+            newData.process[index].moreInfo = null
+            return newData
+        })
+    }
+
+
+    async function addMoreInfoToStep({ step, index, type }) {
+        console.log({ step, index, type, inputArray });
+        setLoadingStep(index, true)
+        const context = inputArray.map(item => item.title || item).join(', ')
+        const { result } = await getData({
+            params: {
+                title: step.title,
+                description: step.description,
+                request: promptsByType[type] || promptsByType['explain'],
+                context
+            },
+            type: 'process-more-info'
+        })
+        setData(oldData => {
+            const newData = { ...oldData }
+            newData.process[index].moreInfo = result
+            return newData
+        })
+    }
+
+    useEffect(() => {
+        async function get() {
+            if (!inputArray.length) {
+                setData(null)
+                return
+            }
+            setLoading(true)
+            const step = inputArray[inputArray.length - 1]
+            const text = step.title ? `${step.title}: ${step.description}` : step
+            const context = inputArray.slice(0, inputArray.length - 1)
+                .map(item => item.title || item).join(', ')
+
+            const { result } = await getData({
+                params: {
+                    text,
+                    context
+                },
+                type: 'process'
+            })
+            setData(result)
+            setLoading(false)
+        }
+        get()
+    }, [inputArray])
+
+
+    async function onStepClicked(type, step, index) {
+        if (loading) {
+            return
+        }
+        if (type === 'process') {
+            setInputArray([...inputArray, step])
+        } else {
+            addMoreInfoToStep({ step, index, type })
+        }
+    }
     return (
         <Box>
-
-
-            <Box
-                sx={{
-                    mt: 2,
-                }}
-            >
-                <TextInputWithSend
-                    onSubmit={onSubmit}
-                    placeHolder='Enter a process'
-
-                />
-            </Box>
             {loading && <LinearProgress />}
-            {processArray && <ProcessList processArray={processArray} />}
-        </Box>
+            <Box sx={{ p: 2, }}>
+                <IconButton
+                    onClick={() => {
+                        setInputArray(arr => arr.slice(0, arr.length - 1))
+                    }}
+                >
+                    <ArrowBackIosSharp />
+                </IconButton>
+                {inputArray.map(item => item.title || item).join(' > ')}
+            </Box>
+            <Divider />
+            {data && <ProcessBox data={data} onClick={onStepClicked} onMoreInfoClosed={onMoreInfoClosed} />}
+        </Box >
     )
 }
 
-function ProcessList({ processArray }) {
-    return (
-        <Box>
-            <Box sx={{}}>
-                <List sx={{
-                    width: '100%',
-                }}>
-                    {(processArray || []).map((subject, index) => (
+function StepInputOutput({ step }) {
+    const { input, output } = step
+    return <Box>
+        {input.join(', ')} {"→"} {output.join(', ')}
+    </Box>
+}
+export function ProcessBox({ data, onClick, onMoreInfoClosed }) {
+    const process = data.process
+    const [openedSteps, setOpenedSteps] = React.useState({})
+
+
+
+    function onStepClicked(index) {
+        setOpenedSteps({
+            ...openedSteps,
+            [index]: !openedSteps[index]
+        })
+    }
+
+    return <Box sx={{}}>
+
+        <TextBox
+            text={data.intro}
+        />
+
+        <List>
+            {
+
+                process.map((step, index) => {
+                    return <Box
+                        key={index}
+                        sx={{
+                            borderBottom: '1px solid gray',
+                            backgroundColor: getColor({ index }),
+                        }}
+                    >
                         <ListItem
-
-                            key={subject.name}
-
+                            onClick={() => onStepClicked(index)}
                             sx={{
-                                bgcolor: getColor({ index }),
-                                p: 0,
-                                mb: 1,
-                                borderRadius: 1,
-                                width: '100%',
-                            }}>
 
-                            <WithCollapse
-                                type="process"
-                                title={subject.title}
-                                description={subject.description}
-                                mainColor={getColor({ index })}
 
-                            >
-                                <Box
+                            }}
+                        >
+                            <ListItemText
+                                primary={<Box
                                     sx={{
-                                        p: 2
+                                        display: 'inline',
                                     }}
                                 >
-                                    <div>
-                                        Expand
-                                    </div>
-                                    <div>
-                                        Process
-                                    </div>
+                                    <Typography component={'span'} variant='body1'
+                                        sx={{
+                                            fontWeight: 'bold'
+                                        }}
+                                    >
+                                        {step.title}:
+                                    </Typography>
+                                    <Typography component={'span'} variant='body1'>
+                                        {` `}{step.description}
+                                    </Typography>
+                                </Box>}
 
 
+                                secondary={<StepInputOutput step={step} />}
+                            />
+
+                            <ListItemSecondaryAction>
+                                <IconButton onClick={() => onStepClicked(index)}>
+                                    <ArrowDropDown />
+                                </IconButton>
+                            </ListItemSecondaryAction>
+                        </ListItem>
+                        <Collapse in={openedSteps[index]}>
+                            <Divider />
+
+                            {/* <Collapse in={true}> */}
+                            {
+                                step.moreInfo && <Box
+                                    sx={{
+                                        p: 1,
+
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-end',
+                                            height: '5px',
+                                            marginTop: '10px'
+
+                                        }}
+                                    >
+                                        <IconButton
+                                            onClick={() => onMoreInfoClosed(index)}
+                                        >
+                                            <Close />
+                                        </IconButton>
+
+                                    </Box>
+                                    <TextBox text={step.moreInfo} />
+                                    <Divider />
 
                                 </Box>
-                            </WithCollapse>
+                            }
+
+                            <Box
+                                sx={{
+                                    p: 1,
+                                }}
+                            >
+
+                                <Button
+                                    onClick={() => onClick('process', step, index)}
+                                >
+                                    Process
+                                </Button>
+
+                                <Button
+                                    onClick={() => onClick('simple', step, index)}
+                                >
+                                    Simpler
+                                </Button>
+
+                                <Button
+                                    onClick={() => onClick('why', step, index)}
+                                >
+                                    Why
+                                </Button>
+
+                                <Button
+                                    onClick={() => onClick('explain', step, index)}
+                                >
+                                    Explain
+                                </Button>
 
 
 
-                            {/* <ListItemText
-                                // onClick={() => onClick(subject, colors.filter(c => c !== mainColor)[index])}
-                                primary={subject.title}
-                                secondary={subject.description}
 
-                            /> */}
+                            </Box>
 
-                        </ListItem>
-                    ))}
+                        </Collapse>
+                    </Box>
+                })
+            }
+        </List>
 
-                </List>
-            </Box>
-
-
-        </Box>
-    )
+    </Box>
 }

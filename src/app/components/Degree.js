@@ -731,7 +731,7 @@ export function Degree({ setPage, params: { degree }, onDataFetched }) {
             <MoreInfoDialog
                 key={`${open}-${moreInfoText}`}
                 open={isMoreInfoClicked}
-                text={moreInfoText}
+                input={moreInfoText}
                 onBackClicked={() => popMoreInfoTextArray()}
                 onClose={() => closeMoreInfoTextDialog()}
                 getData={getData}

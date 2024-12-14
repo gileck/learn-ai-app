@@ -36,8 +36,13 @@ ol {
 
 }
 
+strong {
+  display: inline;
+}
+
+
 p {
-  margin: 7px
+  margin: 0px
 }
 
 ol li::marker {
@@ -46,10 +51,17 @@ ol li::marker {
 
 ol {
   display: grid;
+  margin-top: -30px;
+}
+
+ul {
+  margin-top: -30px;
 }
 
 li {
-  display: grid;
+  display: inline;
+  margin-top: -0px;
+  margin-bottom: -30px;
 }
 
 h3 {
